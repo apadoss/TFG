@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\componentes\Procesador;
 use App\Models\componentes\TarjetaGrafica;
+use App\Models\componentes\PlacasBase;
+use App\Models\componentes\Almacenamiento;
 use Illuminate\Http\Request;
 
 class ComponentesController extends Controller
@@ -18,6 +20,12 @@ class ComponentesController extends Controller
             case 'tarjetas-graficas':
                 $products = TarjetaGrafica::all();
                 break;
+            case 'placas-base':
+                $products = PlacasBase::all();
+                break;
+            case 'almacenamiento':
+                $products = Almacenamiento::all();
+                break;
             default:
                 abort(404);
             }
@@ -25,7 +33,25 @@ class ComponentesController extends Controller
     }
 
     public function view(Request $request) {
-        $product = Procesador::find($request->id);
+        $segment = $request->segment(2);
+        $product = null;
+
+        switch ($segment) {
+            case 'procesadores':
+                $product = Procesador::find($request->id);
+                break;
+            case 'tarjetas-graficas':
+                $product = TarjetaGrafica::find($request->id);
+                break;
+            case 'placas-base':
+                $product = PlacasBase::find($request->id);
+                break;
+            case 'almacenamiento':
+                $product = Almacenamiento::find($request->id);
+                break;
+            default:
+                abort(404);
+            }
 
         return view('componentes.view', compact('product'));
     }
