@@ -49,33 +49,7 @@
                 <div id="filtrosCollapse" class="accordion-collapse collapse" aria-labelledby="filtrosHeading" data-bs-parent="#filtrosAccordion">
                     <div class="accordion-body">
                         <div class="list-group">
-                            <label for="brand-selector">Marca:</label>
-                            <select id="brand-selector" class="form-select">
-                                <option selected>Seleccione...</option>
-                                <option value="1">Intel</option>
-                                <option value="2">AMD</option>
-                            </select>
-
-                            <label for="socket-selector">Socket:</label>
-                            <select id="socket-selector" class="form-select">
-                                <option selected>Seleccione...</option>
-                                <option value="1">LGA 1700</option>
-                                <option value="2">FCLGA1851</option>
-                                <option value="3">AM4</option>
-                                <option value="4">AM5</option>
-                            </select>
-
-                            <p>Nº núcleos</p>
-                            <div id="coreRange" class="mb-2"></div>
-                            <p>
-                                <span id="coreRangeMin"></span> - <span id="coreRangeMax"></span>
-                            </p>
-
-                            <div class="form-check">
-                                <label class="form-check-label">
-                                     <input type="checkbox" class="form-check-input" name="" id="" value="checkedValue"> Gráficos Integrados
-                                </label>
-                            </div>
+                            @include("partials.filters")
                         </div>
                     </div>
                 </div>
