@@ -6,6 +6,9 @@ use App\Models\componentes\Procesador;
 use App\Models\componentes\TarjetaGrafica;
 use App\Models\componentes\PlacasBase;
 use App\Models\componentes\Almacenamiento;
+use App\Models\componentes\MemoriaRam;
+use App\Models\componentes\FuenteAlimentacion;
+use App\Models\componentes\Portatil;
 use Illuminate\Http\Request;
 
 class ComponentesController extends Controller
@@ -25,6 +28,15 @@ class ComponentesController extends Controller
                 break;
             case 'almacenamiento':
                 $products = Almacenamiento::all();
+                break;
+            case 'ram':
+                $products = MemoriaRam::all();
+                break;
+            case 'fuentes-alimentacion':
+                $products = FuenteAlimentacion::all();
+                break;
+            case 'portatiles':
+                $products = Portatil::all();
                 break;
             default:
                 abort(404);
@@ -48,6 +60,15 @@ class ComponentesController extends Controller
                 break;
             case 'almacenamiento':
                 $product = Almacenamiento::find($request->id);
+                break;
+            case 'ram':
+                $product = MemoriaRam::find($request->id);
+                break;
+            case 'fuentes-alimentacion':
+                $product = FuenteAlimentacion::find($request->id);
+                break;
+            case 'portatiles':
+                $product = Portatil::find($request->id);
                 break;
             default:
                 abort(404);
