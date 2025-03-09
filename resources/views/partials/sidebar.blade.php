@@ -39,21 +39,23 @@
         </div>
 
         <!-- Filtros -->
-        <div class="accordion mt-3" id="filtrosAccordion">
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="filtrosHeading">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
-                        Filtros
-                    </button>
-                </h2>
-                <div id="filtrosCollapse" class="accordion-collapse collapse" aria-labelledby="filtrosHeading" data-bs-parent="#filtrosAccordion">
-                    <div class="accordion-body">
-                        <div class="list-group">
-                            @include("partials.filters")
+        @if (request()->segment(1) == "componentes")
+            <div class="accordion mt-3" id="filtrosAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="filtrosHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
+                            Filtros
+                        </button>
+                    </h2>
+                    <div id="filtrosCollapse" class="accordion-collapse collapse" aria-labelledby="filtrosHeading" data-bs-parent="#filtrosAccordion">
+                        <div class="accordion-body">
+                            <div class="list-group">
+                                @include("partials.filters")
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     </div>
 </nav>
