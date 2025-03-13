@@ -92,7 +92,7 @@
             .then(response => response.json())
             .then(data => {
                 if (data.message) {
-                    appendMessage('ai', data.message);
+                    appendMessage('ai', data.message, true); // Pass true to indicate Markdown
                 } else {
                     appendMessage('ai', 'Error al obtener una respuesta.');
                 }
@@ -103,7 +103,7 @@
             });
         }
 
-        function appendMessage(sender, message) {
+        function appendMessage(sender, message, isMarkdown = false) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', `${sender}-message`);
             
@@ -114,10 +114,25 @@
             }
             messageDiv.classList.add('mb-2');
 
-            messageDiv.innerHTML = `<p class="bg-${sender === 'user' ? 'primary' : 'success'} text-white p-2 rounded">${message}</p>`;
+            let messageContent;
+            if (isMarkdown) {
+                messageContent = marked.parse(message); // Use marked.js to parse Markdown
+            } else {
+                messageContent = message;
+            }
+
+            const bubble = document.createElement('p');
+            bubble.classList.add('p-2', 'rounded');
+            bubble.classList.add(sender === 'user' ? 'bg-primary' : 'bg-success');
+            bubble.classList.add('text-white');
+            bubble.innerHTML = messageContent;
+            messageDiv.appendChild(bubble);
+
             chatContainer.appendChild(messageDiv);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 @endsection
