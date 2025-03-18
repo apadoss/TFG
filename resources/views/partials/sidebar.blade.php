@@ -57,5 +57,19 @@
                 </div>
             </div>
         @endif
+
+        <!-- Configuraciones -->
+        <div class="list-group mt-3">
+            <a href="/configuraciones/index" class="list-group-item list-group-item-action text-dark">
+                <i class="bi bi-tools me-2" style="font-size: 1.5rem;"></i>Mis configuraciones
+            </a>
+        </div>
+
+        <!-- Asesor IA -->
+        <div class="list-group mt-3">
+            <a href="/asesor-ia" class="list-group-item list-group-item-action text-dark">
+                <i class="bi bi-stars me-2" style="font-size: 1.5rem;"></i>Asesor IA
+            </a>
+        </div>
     </div>
 </nav>

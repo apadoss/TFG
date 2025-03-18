@@ -1,0 +1,42 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1 class="h1">Configuraciones</h1>
+
+    <div class="d-flex justify-content-end">
+        <a href="{{ route('configuraciones.create') }}" class="btn btn-primary">Nueva</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th> </th>
+                <th>Componentes</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($configuraciones as $configuracion)
+                <tr>
+                    <td>1</td>
+                    <td>
+                        <ul>
+                            <li><b>Procesador:</b> {{$configuracion->cpu ? $configuracion->cpu->name : 'No especificado'}}</li>
+                            <li><b>Tarjeta gráfica:</b> {{$configuracion->graphic_card ? $configuracion->graphic_card->name : 'No especificado'}}</li>
+                            <li><b>Placa Base:</b> {{$configuracion->motherboard ? $configuracion->motherboard->name : 'No especificado'}}</li>
+                            <li><b>Almacenamiento:</b> {{$configuracion->storage ? $configuracion->storage->name : 'No especificado'}}</li>
+                            <li><b>RAM:</b> {{$configuracion->ram ? $configuracion->ram->name : 'No especificado'}}</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <div class="d-flex flex-column gap-2">
+                            <button class="btn btn-primary">Editar</button>
+                            <button class="btn btn-danger">Eliminar</button>
+                        </div>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+</div>
+@endsection
