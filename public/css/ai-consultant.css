@@ -1,0 +1,94 @@
+.message-container {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.user-message {
+    justify-content: flex-end;
+}
+
+.ai-message {
+    justify-content: flex-start;
+}
+
+.message-bubble {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    word-wrap: break-word;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-message .message-bubble {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white;
+    border-bottom-right-radius: 0;
+}
+
+.ai-message .message-bubble {
+    background-color: #28a745; /* Verde para mensajes de IA */
+    color: white;
+    border-bottom-left-radius: 0;
+}
+
+/* Estilos para el modal y el carrusel */
+.modal-lg {
+    max-width: 800px;
+}
+
+#responseCarousel {
+    margin: 0 auto;
+}
+
+.carousel-item {
+    padding: 20px;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 30px;
+    height: 30px;
+    padding: 10px;
+}
+
+/* Estilos para las tablas en el carrusel */
+.carousel-item table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.carousel-item table th,
+.carousel-item table td {
+    border: 1px solid #dee2e6;
+    padding: 8px;
+}
+
+.carousel-item table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    text-align: center;
+}
+
+.carousel-item table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.carousel-item table tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Estilos para los botones */
+.modal-footer {
+    justify-content: space-between;
+}
+
+/* Estilos para el spinner */
+#loadingSpinner {
+    padding: 40px 0;
+}

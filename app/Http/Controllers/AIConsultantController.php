@@ -20,6 +20,12 @@ class AIConsultantController extends Controller
         }
 
         try {
+            $systemPrompt = "Proporciona configuraciones de PC en formato de tabla con las columnas: 
+                Componente, Modelo, Precio (USD). Genera 3 tablas por nivel: Básico, Intermedio, Avanzado. NO 
+                pongas el nivel como columna de la tabla. Responde solo con la tabla sin texto adicional. 
+                Si recibes un texto que no se corresponde con una configuración válida, responde con el texto: 
+                \"Configuración no válida\", sin texto adicional.";
+
             $response = Http::withHeaders([
                 'Authorization' => "Bearer $apiKey",
                 'Content-Type' => 'application/json',
@@ -28,10 +34,8 @@ class AIConsultantController extends Controller
             ->post('https://openrouter.ai/api/v1/chat/completions', [
                 'model' => 'deepseek/deepseek-r1:free',
                 'messages' => [
-                    [
-                        'role' => 'user',
-                        'content' => $userMessage,
-                    ],
+                    ['role' => 'system', 'content' => $systemPrompt,],
+                    ['role' => 'user', 'content' => $userMessage,],
                 ],
             ]);
 
