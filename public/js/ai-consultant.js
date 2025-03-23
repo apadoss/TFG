@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Referencias a elementos DOM
-    const chatContainer = document.getElementById('chat-container');
     const userMessageInput = document.getElementById('user-message');
     const sendButton = document.getElementById('send-button');
     const initialMessage = document.getElementById('initial-message');
     
     // Verificar que los elementos existen
-    if (!chatContainer || !userMessageInput || !sendButton) {
+    if (!userMessageInput || !sendButton) {
         console.error('Error: No se encontraron todos los elementos necesarios del DOM');
         return;
     }
@@ -332,11 +331,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 responseModal.show();
             };
         }
-        
-        // Agregar el mensaje al chat
-        messageDiv.appendChild(bubble);
-        chatContainer.appendChild(messageDiv);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
     // Agregar event listeners
