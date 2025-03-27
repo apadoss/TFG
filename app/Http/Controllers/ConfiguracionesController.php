@@ -13,7 +13,11 @@ class ConfiguracionesController extends Controller
         return view('configuraciones.index', compact('configuraciones'));
     }
 
-    public function create() {
-        return view('configuraciones.create');
+    public function create(Request $request) {
+        if ($request->input('type') == 'basic') {
+            return view('configuraciones.create-basic');
+        }
+
+        return view('configuraciones.create-advanced');
     }
 }

@@ -20,5 +20,4 @@
 <link rel="stylesheet" href="{{asset("css/ai-consultant.css")}}">
 <script src="{{asset("js/ai-consultant.js")}}"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 @endsection

@@ -5,7 +5,15 @@
     <h1 class="h1">Configuraciones</h1>
 
     <div class="d-flex justify-content-end">
-        <a href="{{ route('configuraciones.create') }}" class="btn btn-primary">Nueva</a>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true">
+                Nueva
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ route('configuraciones.create', ['type' => 'basic']) }}">Básica</a></li>
+                <li><a class="dropdown-item" href="{{ route('configuraciones.create', ['type' => 'advanced']) }}">Avanzada</a></li>
+            </ul>
+        </div>
     </div>
 
     <table class="table">

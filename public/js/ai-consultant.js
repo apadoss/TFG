@@ -3,9 +3,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const userMessageInput = document.getElementById('user-message');
     const sendButton = document.getElementById('send-button');
     const initialMessage = document.getElementById('initial-message');
+
+    console.log(sendButton);
     
     // Verificar que los elementos existen
-    if (!userMessageInput || !sendButton) {
+    if (!sendButton) {
         console.error('Error: No se encontraron todos los elementos necesarios del DOM');
         return;
     }
@@ -68,14 +70,67 @@ document.addEventListener('DOMContentLoaded', function () {
     const responseButtons = document.getElementById('responseButtons');
     const saveConfigBtn = document.getElementById('saveConfigBtn');
     const regenerateBtn = document.getElementById('regenerateBtn');
+
+    const computingPowerSelect = document.getElementById('computing-power');
+    const purposeSelect = document.getElementById('purpose');
+    const budgetMinInput = document.getElementById('budget-min');
+    const budgetMaxInput = document.getElementById('budget-max');
+    const portabilitySelect = document.getElementById('portability');
+
+    const cpuBrandSelect = document.getElementById('cpu-brand');
+    const gpuBrandSelect = document.getElementById('gpu-brand');
     
     // Último mensaje enviado para regenerar
     let lastUserMessage = '';
 
+    function generateMessage() {
+        const computingPowerMap = {
+            '1': 'Baja',
+            '2': 'Media',
+            '3': 'Alta'
+        };
+
+        const purposeMap = {
+            '1': 'Ofimática',
+            '2': 'Edición de video',
+            '3': 'Diseño gráfico',
+            '4': 'Gaming'
+        };
+        const portabilityMap = {
+            '1': 'Portátil',
+            '2': 'Sobremesa'
+        };
+
+        const brandMap = {  
+            'cpu-brand': {
+                '1': 'Intel',
+                '2': 'AMD'
+            },
+            'gpu-brand': {
+                '1': 'Intel',
+                '2': 'AMD',
+                '3': 'Nvidia'
+            }
+        };
+
+        const computingPower = computingPowerMap[computingPowerSelect.value];
+        const purpose = purposeMap[purposeSelect.value];
+        const budgetMin = budgetMinInput.value;
+        const budgetMax = budgetMaxInput.value;
+        const portability = portabilityMap[portabilitySelect.value];
+        const cpuBrand = brandMap['cpu-brand'][cpuBrandSelect.value] || 'cualquier marca';
+        const gpuBrand = brandMap['gpu-brand'][gpuBrandSelect.value] || 'cualquier marca';
+
+        return `Quiero un ordenador ${portability} con ${computingPower} potencia de cómputo, para ${purpose}. 
+        Presupuesto entre ${budgetMin} y ${budgetMax} €. 
+        Preferencia de procesador: ${cpuBrand}. 
+        Preferencia de tarjeta gráfica: ${gpuBrand}.`;
+    }
+
     // Función principal para enviar mensajes
-    function sendMessage() {
-        const userMessage = userMessageInput.value.trim();
-        if (userMessage === '') {
+    function sendMessage(message = '') {
+        const userMessage = !userMessageInput ? generateMessage() : userMessageInput.value.trim();
+        if (userMessage === '' && message === '') {
             console.log('Mensaje vacío, no se envía');
             return;
         }
@@ -89,8 +144,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Agregar mensaje del usuario al chat
-        appendMessage('user', userMessage);
-        userMessageInput.value = '';
+        if (userMessageInput) {
+            userMessageInput.value = '';
+        }
         
         // Si el modal y el spinner existen, mostrarlos
         if (loadingSpinner && responseModal) {
@@ -340,13 +396,15 @@ document.addEventListener('DOMContentLoaded', function () {
         sendMessage();
     });
 
-    userMessageInput.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            console.log('Enter presionado');
-            event.preventDefault();
-            sendMessage();
-        }
-    });
+    if (userMessageInput) {
+        userMessageInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                console.log('Enter presionado');
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    }
 
     // Botones del modal
     if (saveConfigBtn) {
