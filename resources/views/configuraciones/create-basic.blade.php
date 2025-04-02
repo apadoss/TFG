@@ -5,29 +5,53 @@
     <h1 class="h1">Crear nueva configuración</h1>
     {{-- <form action="{{ route('configuraciones.store') }}" method="POST"> --}}
         {{-- @csrf --}}
-        <div class="row mb-3">
+        <p class="text-danger"><b>Nota:</b> Mientras más parametros indique, más precisa será la configuración generada.</p>
+        
+        <div class="row mb-5">
             <div class="col-md-6">
-                <label for="computing-power">Potencia de cómputo: </label>
-                <select class="form-control" name="computing-power" id="computing-power">
-                    <option value="1">Baja</option>
-                    <option value="2">Media</option>
-                    <option value="3">Alta</option>
-                </select>
+                <h2 class="h4">Potencia de cómputo</h2>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="computing-power[]" id="computing-power-low" value="1">
+                    <label class="form-check-label" for="computing-power-low">Baja</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="computing-power[]" id="computing-power-medium" value="2">
+                    <label class="form-check-label" for="computing-power-medium">Media</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="computing-power[]" id="computing-power-high" value="3">
+                    <label class="form-check-label" for="computing-power-high">Alta</label>
+                </div>
             </div>
             <div class="col-md-6">
-                <label for="purpose">Propósito principal: </label>
-                <select class="form-control" name="purpose" id="purpose">
-                    <option value="1">Ofimática</option>
-                    <option value="2">Edición de video</option>
-                    <option value="3">Diseño gráfico</option>
-                    <option value="4">Gaming</option>
-                </select>
+                <h2 class="h4">Propósito principal</h2>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="purpose[]" id="purpose-office" value="1">
+                    <label class="form-check-label" for="purpose-office">Ofimática</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="purpose[]" id="purpose-video" value="2">
+                    <label class="form-check-label" for="purpose-video">Edición de video</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="purpose[]" id="purpose-design" value="3">
+                    <label class="form-check-label" for="purpose-design">Diseño gráfico</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="purpose[]" id="purpose-gaming" value="4">
+                    <label class="form-check-label" for="purpose-gaming">Gaming</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="purpose[]" id="purpose-other" value="0">
+                    <label class="form-check-label" for="purpose-any">Otro (especifique): </label>
+                    <input type="text" class="form-control mt-1" id="purpose-other-text" name="purpose-other-text">
+                </div>
             </div>
         </div>
 
-        <div class="row mb-3">
+        <div class="row mb-5">
             <div class="col-md-6">
-                <label for="budget">Presupuesto: </label>
+                <h2 class="h4">Presupuesto: </h2>
                 <div class="input-group">
                     <input type="text" class="form-control" id="budget-min">
                     <span class="input-group-text" id="budget-help"> - </span>
@@ -36,32 +60,63 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <label for="portability">Portabilidad: </label>
+                <h2 class="h4">Portabilidad</h2>
                 <select class="form-control" name="portability" id="portability">
-                    <option value="1">Portátil</option>
-                    <option value="2">Sobremesa</option>
+                    <option value="1" selected>Me es indiferente</option>
+                    <option value="2">Portátil</option>
+                    <option value="3">Sobremesa</option>
                 </select>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h2 class="h4">Almacenamiento: </h2>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="storage-min">
+                    <span class="input-group-text" id="storage-help"> - </span>
+                    <input type="text" class="form-control" id="storage-max">
+                    <span class="input-group-text" id="storage-help">TB</span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2 class="h4">Memoria RAM: </h2>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="ram-min">
+                    <span class="input-group-text" id="ram-help"> - </span>
+                    <input type="text" class="form-control" id="ram-max">
+                    <span class="input-group-text" id="ram-help">TB</span>
+                </div>
             </div>
         </div>
 
         <h2 class="h2">Preferencias de marca</h2>
         <div class="row mb-3">
             <div class="col-md-6">
-                <label for="cpu-brand">Procesador: </label>
-                <select class="form-control" name="cpu-brand" id="cpu-brand">
-                    <option selected>Seleccione...</option>
-                    <option value="1">Intel</option>
-                    <option value="2">AMD</option>
-                </select>
+                <h2 class="h4">Procesador</h2>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="cpu-brand[]" id="cpu-brand-intel" value="1">
+                    <label class="form-check-label" for="cpu-brand-intel">Intel</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="cpu-brand[]" id="cpu-brand-amd" value="2">
+                    <label class="form-check-label" for="cpu-brand-amd">AMD</label>
+                </div>
             </div>
             <div class="col-md-6">
-                <label for="gpu-brand">Tarjeta gráfica: </label>
-                <select class="form-control" name="gpu-brand" id="gpu-brand">
-                    <option selected>Seleccione...</option>
-                    <option value="1">Intel</option>
-                    <option value="2">AMD</option>
-                    <option value="3">Nvidia</option>
-                </select>
+                <h2 class="h4">Tarjeta gráfica</h2>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="gpu-brand[]" id="gpu-brand-intel" value="1">
+                    <label class="form-check-label" for="gpu-brand-intel">Intel</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="gpu-brand[]" id="gpu-brand-amd" value="2">
+                    <label class="form-check-label" for="gpu-brand-amd">AMD</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="gpu-brand[]" id="gpu-brand-nvidia" value="3">
+                    <label class="form-check-label" for="gpu-brand-nvidia">Nvidia</label>
+                </div>
             </div>
         </div>
 

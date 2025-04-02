@@ -64,66 +64,108 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Bootstrap no está disponible. Asegúrate de incluir la biblioteca Bootstrap.');
     }
     
-    // Obtener referencias a los elementos del modal
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const responseCarousel = document.getElementById('responseCarousel');
-    const responseButtons = document.getElementById('responseButtons');
-    const saveConfigBtn = document.getElementById('saveConfigBtn');
-    const regenerateBtn = document.getElementById('regenerateBtn');
-
-    const computingPowerSelect = document.getElementById('computing-power');
-    const purposeSelect = document.getElementById('purpose');
+    // Obtener referencias a los elementos del formulario
+    const computingPowerCheckboxes = document.querySelectorAll('input[name="computing-power[]"]');
+    const purposeCheckboxes = document.querySelectorAll('input[name="purpose[]"]');
+    const purposeOtherCheckbox = document.getElementById('purpose-other');
+    const purposeOtherText = document.getElementById('purpose-other-text');
     const budgetMinInput = document.getElementById('budget-min');
     const budgetMaxInput = document.getElementById('budget-max');
     const portabilitySelect = document.getElementById('portability');
+    const storageMinInput = document.getElementById('storage-min');
+    const storageMaxInput = document.getElementById('storage-max');
+    const ramMinInput = document.getElementById('ram-min');
+    const ramMaxInput = document.getElementById('ram-max');
+    const cpuBrandCheckboxes = document.querySelectorAll('input[name="cpu-brand[]"]');
+    const gpuBrandCheckboxes = document.querySelectorAll('input[name="gpu-brand[]"]');
 
-    const cpuBrandSelect = document.getElementById('cpu-brand');
-    const gpuBrandSelect = document.getElementById('gpu-brand');
-    
+    // Modal elements (assuming they exist or will be created)
+    const loadingSpinner = document.getElementById('loadingSpinner') || document.createElement('div');
+    const responseCarousel = document.getElementById('responseCarousel') || document.createElement('div');
+    const responseButtons = document.getElementById('responseButtons') || document.createElement('div');
+    const saveConfigBtn = document.getElementById('saveConfigBtn') || document.createElement('button');
+    const regenerateBtn = document.getElementById('regenerateBtn') || document.createElement('button');
+
     // Último mensaje enviado para regenerar
     let lastUserMessage = '';
 
+    // Función para obtener los valores seleccionados de los checkboxes
+    function getSelectedCheckboxValues(checkboxes) {
+        return Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+    }
+
+    // Función para generar el mensaje basado en las selecciones del usuario
     function generateMessage() {
         const computingPowerMap = {
             '1': 'Baja',
             '2': 'Media',
             '3': 'Alta'
         };
-
+        
         const purposeMap = {
             '1': 'Ofimática',
             '2': 'Edición de video',
             '3': 'Diseño gráfico',
             '4': 'Gaming'
         };
+        
         const portabilityMap = {
-            '1': 'Portátil',
-            '2': 'Sobremesa'
+            '1': 'Portátil o Sobremesa',
+            '2': 'Portátil',
+            '3': 'Sobremesa'
         };
-
-        const brandMap = {  
-            'cpu-brand': {
-                '1': 'Intel',
-                '2': 'AMD'
-            },
-            'gpu-brand': {
-                '1': 'Intel',
-                '2': 'AMD',
-                '3': 'Nvidia'
-            }
-        };
-
-        const computingPower = computingPowerMap[computingPowerSelect.value];
-        const purpose = purposeMap[purposeSelect.value];
-        const budgetMin = budgetMinInput.value;
-        const budgetMax = budgetMaxInput.value;
-        const portability = portabilityMap[portabilitySelect.value];
-        const cpuBrand = brandMap['cpu-brand'][cpuBrandSelect.value] || 'cualquier marca';
-        const gpuBrand = brandMap['gpu-brand'][gpuBrandSelect.value] || 'cualquier marca';
-
-        return `Quiero un ordenador ${portability} con ${computingPower} potencia de cómputo, para ${purpose}. 
-        Presupuesto entre ${budgetMin} y ${budgetMax} €. 
-        Preferencia de procesador: ${cpuBrand}. 
+        
+        // Obtener valores seleccionados
+        const selectedComputingPowers = getSelectedCheckboxValues(computingPowerCheckboxes);
+        const selectedPurposes = getSelectedCheckboxValues(purposeCheckboxes);
+        const selectedCpuBrands = getSelectedCheckboxValues(cpuBrandCheckboxes);
+        const selectedGpuBrands = getSelectedCheckboxValues(gpuBrandCheckboxes);
+        
+        // Procesar valores seleccionados
+        const computingPower = selectedComputingPowers.map(value => computingPowerMap[value]).join(', ') || 'cualquier';
+        
+        let purpose = selectedPurposes
+            .filter(value => value !== '0') // Filtrar la opción "Otro"
+            .map(value => purposeMap[value])
+            .join(', ');
+            
+        // Añadir el propósito "Otro" si está seleccionado
+        if (purposeOtherCheckbox && purposeOtherCheckbox.checked && purposeOtherText.value) {
+            purpose = purpose ? `${purpose}, ${purposeOtherText.value}` : purposeOtherText.value;
+        }
+        
+        if (!purpose) purpose = 'uso general';
+        
+        const budgetMin = budgetMinInput.value || '0';
+        const budgetMax = budgetMaxInput.value || 'sin límite';
+        const portability = portabilityMap[portabilitySelect.value] || 'cualquier tipo';
+        
+        const storageMin = storageMinInput.value || '0';
+        const storageMax = storageMaxInput.value || 'sin límite';
+        
+        const ramMin = ramMinInput.value || '0';
+        const ramMax = ramMaxInput.value || 'sin límite';
+        
+        const cpuBrand = selectedCpuBrands.length > 0 
+            ? selectedCpuBrands.map(value => value === '1' ? 'Intel' : 'AMD').join(' o ') 
+            : 'cualquier marca';
+            
+        const gpuBrand = selectedGpuBrands.length > 0 
+            ? selectedGpuBrands.map(value => {
+                if (value === '1') return 'Intel';
+                if (value === '2') return 'AMD';
+                if (value === '3') return 'Nvidia';
+                return '';
+              }).filter(brand => brand).join(' o ') 
+            : 'cualquier marca';
+        
+        return `Quiero un ordenador ${portability} con potencia de cómputo ${computingPower}, para ${purpose}.
+        Presupuesto entre ${budgetMin} y ${budgetMax} €.
+        Almacenamiento entre ${storageMin} y ${storageMax} TB.
+        Memoria RAM entre ${ramMin} y ${ramMax} GB.
+        Preferencia de procesador: ${cpuBrand}.
         Preferencia de tarjeta gráfica: ${gpuBrand}.`;
     }
 
