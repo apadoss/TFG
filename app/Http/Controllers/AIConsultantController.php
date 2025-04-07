@@ -22,7 +22,9 @@ class AIConsultantController extends Controller
         try {
             $systemPrompt = "Proporciona configuraciones de PC en formato de tabla con las columnas: 
                 Componente, Modelo, Precio (USD). Genera 3 tablas por nivel: Básico, Intermedio, Avanzado. NO 
-                pongas el nivel como columna de la tabla. Responde solo con la tabla sin texto adicional. 
+                pongas el nivel como columna de la tabla. Responde solo con la tabla sin texto adicional.
+                Las filas han de ser las siguientes: \"Procesador\", \"Tarjeta Gráfica\", \"RAM\", 
+                \"Almacenamiento\", \"Placa Base\", \"Fuente de Alimentación\", \"Caja\", \"Batería\" (si corresponde).
                 Si recibes un texto que no se corresponde con una configuración válida, responde con el texto: 
                 \"Configuración no válida\", sin texto adicional.";
 

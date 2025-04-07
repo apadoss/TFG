@@ -15,32 +15,40 @@ class ComponentesController extends Controller
 {
     public function index(Request $request) {
         $segment = $request->segment(2);
+        $name = $request->name;
         $products = [];
         switch ($segment) {
             case 'procesadores':
-                $products = Procesador::all();
+                $query = Procesador::query();
                 break;
             case 'tarjetas-graficas':
-                $products = TarjetaGrafica::all();
+                $query = TarjetaGrafica::query();
                 break;
             case 'placas-base':
-                $products = PlacasBase::all();
+                $query = PlacasBase::query();
                 break;
             case 'almacenamiento':
-                $products = Almacenamiento::all();
+                $query = Almacenamiento::query();
                 break;
             case 'ram':
-                $products = MemoriaRam::all();
+                $query = MemoriaRam::query();
                 break;
             case 'fuentes-alimentacion':
-                $products = FuenteAlimentacion::all();
+                $query = FuenteAlimentacion::query();
                 break;
             case 'portatiles':
-                $products = Portatil::all();
+                $query = Portatil::query();
                 break;
             default:
                 abort(404);
-            }
+        }
+        
+        if ($name) {
+            $query->where('name', 'like', '%' . $name . '%');
+        }
+        
+        $products = $query->get();
+
         return view('componentes.index', compact('products'));
     }
 

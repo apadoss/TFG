@@ -282,11 +282,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     title.className = 'text-center mb-3';
                     title.textContent = levelTitle;
                     
-                    // Convertir la tabla markdown a HTML con la librería marked
+                    // Convertir la tabla markdown a HTML con la librería marked y procesarla para agregar enlaces
                     try {
                         if (typeof marked !== 'undefined') {
-                            const tableHtml = marked.parse(table);
+                            // Modificar la tabla para convertir nombres de componentes en enlaces
+                            const processedTable = processComponentsAsLinks(table);
+                            const tableHtml = marked.parse(processedTable);
                             tableContainer.innerHTML = tableHtml;
+                            
+                            // Después de renderizar, añadir listeners a los enlaces
+                            addLinkListeners(tableContainer);
                         } else {
                             console.error('La librería marked no está disponible');
                             tableContainer.innerHTML = '<pre>' + table + '</pre>';
@@ -316,6 +321,61 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('No se encuentra el elemento del carrusel');
             }
         }
+    }
+    
+    // Procesar componentes como enlaces
+    function processComponentsAsLinks(tableText) {
+        const componentCategories = [
+            'Procesador', 'Tarjeta Gráfica', 'Placa Base', 'RAM', 'Almacenamiento', 'Fuente de Alimentación', 
+            'Refrigeración', 'Caja', 'Monitor', 'Pantalla'
+        ];
+
+        const categoryToLinkMap = {
+            'Procesador': '/componentes/procesadores',
+            'Tarjeta Gráfica': '/componentes/tarjetas-graficas',
+            'Placa Base': '/componentes/placas-base',
+            'RAM': '/componentes/ram',
+            'Almacenamiento': '/componentes/almacenamiento',
+            'Fuente de Alimentación': '/componentes/fuentes-alimentacion',
+            'Refrigeración': '/componentes/refrigeracion',
+            'Caja': '/componentes/cajas',
+            'Monitor': '/componentes/monitores',
+            'Pantalla': '/componentes/monitores'
+          };
+        
+        let lines = tableText.split('\n');
+        
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].includes('|')) {
+                const cells = lines[i].split('|').map(cell => cell.trim());
+                
+                for (let j = 0; j < cells.length; j++) {
+                    for (const category of componentCategories) {
+                        // Si encontramos una categoría, buscar el valor del componente en la celda siguiente
+                        if (cells[j].includes(category) && j + 1 < cells.length) {
+                            const componentValue = cells[j + 1].trim();
+                            if (componentValue && componentValue !== '-' && !componentValue.includes('|')) {
+                                cells[j + 1] = `[${componentValue}](${categoryToLinkMap[category]}?name=${encodeURIComponent(componentValue)})`;
+                            }
+                            break;
+                        }
+                    }
+                }
+                
+                // Reconstruir la línea
+                lines[i] = cells.join(' | ');
+            }
+        }
+        
+        return lines.join('\n');
+    }
+    
+    function addLinkListeners(container) {
+        const componentLinks = container.querySelectorAll('a[href^="/componentes"]');
+        
+        componentLinks.forEach(link => {
+            link.setAttribute('target', '_blank');
+        });
     }
 
     function extractTables(markdownText) {
