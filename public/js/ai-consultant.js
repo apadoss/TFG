@@ -99,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para generar el mensaje basado en las selecciones del usuario
     function generateMessage() {
         const computingPowerMap = {
+            '0': 'cualquiera',
             '1': 'Baja',
             '2': 'Media',
             '3': 'Alta'
@@ -149,11 +150,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const ramMax = ramMaxInput.value || 'sin límite';
         
         const cpuBrand = selectedCpuBrands.length > 0 
-            ? selectedCpuBrands.map(value => value === '1' ? 'Intel' : 'AMD').join(' o ') 
+            ? selectedCpuBrands.map(value => {
+                if (value === '0') return 'cualquier marca';
+                if (value === '1') return 'Intel';
+                if (value === '2') return 'AMD';
+            }).join(' o ')
             : 'cualquier marca';
             
         const gpuBrand = selectedGpuBrands.length > 0 
             ? selectedGpuBrands.map(value => {
+                if (value === '0') return 'cualquier marca';
                 if (value === '1') return 'Intel';
                 if (value === '2') return 'AMD';
                 if (value === '3') return 'Nvidia';
@@ -161,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
               }).filter(brand => brand).join(' o ') 
             : 'cualquier marca';
         
-        return `Quiero un ordenador ${portability} con potencia de cómputo ${computingPower}, para ${purpose}.
+        return `Quiero un ordenador ${portability} con ${computingPower} potencia de cómputo, para ${purpose}.
         Presupuesto entre ${budgetMin} y ${budgetMax} €.
         Almacenamiento entre ${storageMin} y ${storageMax} TB.
         Memoria RAM entre ${ramMin} y ${ramMax} GB.
