@@ -517,7 +517,49 @@ document.addEventListener('DOMContentLoaded', function () {
     // Botones del modal
     if (saveConfigBtn) {
         saveConfigBtn.addEventListener('click', function() {
-            alert('Configuración guardada correctamente');
+            const activeSlide = document.querySelector('#responseCarousel .carousel-item.active');
+            if (activeSlide) {
+                const tableRows = activeSlide.querySelectorAll('tr');
+                let components = {};
+
+                tableRows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+
+                    if (cells.length >= 2) {
+                        const category = cells[0].textContent.trim();
+                        let componentName = '';
+
+                        const link = cells[1].querySelector('a');
+                        if (link) {
+                            componentName = link.textContent.trim();
+                        } else {
+                            componentName = cells[1].textContent.trim();
+                        }
+
+                        let categoryKey = '';
+                        if (category.includes('Procesador')) categoryKey = 'procesador';
+                        else if (category.includes('Tarjeta gráfica')) categoryKey = 'tarjeta-grafica';
+                        else if (category.includes('Placa Base')) categoryKey = 'placa-base';
+                        else if (category.includes('RAM')) categoryKey = 'ram';
+                        else if (category.includes('Almacenamiento')) categoryKey = 'almacenamiento';
+                        else if (category.includes('Fuente de Alimentación')) categoryKey = 'fuente-alimentacion';
+
+                        if (categoryKey && componentName && componentName !== '-') {
+                            components[categoryKey] = encodeURIComponent(componentName);
+                        }
+                    }
+                });
+
+                let redirectUrl = 'http://127.0.0.1:8000/configuraciones/create?type=advanced';
+
+                for (const [key, value] of Object.entries(components)) {
+                    redirectUrl += `&${key}=${value}`;
+                }
+
+                window.location.href = redirectUrl;
+            } else {
+                window.location.href = 'http://127.0.0.1:8000/configuraciones/create?type=advanced';
+            }
         });
     }
 

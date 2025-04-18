@@ -84,4 +84,70 @@ class ComponentesController extends Controller
 
         return view('componentes.view', compact('product'));
     }
+
+    public function getCpus(Request $request) {
+        $query = Procesador::select('id', 'name', 'image');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $cpus = $query->get();
+        return response()->json($cpus);
+    }
+
+    public function getGraphicsCards(Request $request) {
+        $query = TarjetaGrafica::select('id', 'name', 'image');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $graphicsCards = $query->get();
+        return response()->json($graphicsCards);
+    }
+
+    public function getMotherboards(Request $request) {
+        $query = PlacasBase::select('id', 'name', 'image');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $motherboards = $query->get();
+        return response()->json($motherboards);
+    }
+
+    public function getPowerSupplies(Request $request) {
+        $query = FuenteAlimentacion::select('id', 'name', 'image');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $powerSupplies = $query->get();
+        return response()->json($powerSupplies);
+    }
+
+    public function getRams(Request $request) {
+        $query = MemoriaRam::select('id', 'name', 'image');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $rams = $query->get();
+        return response()->json($rams);
+    }
+
+    public function getStorageDevices(Request $request) {
+        $query = Almacenamiento::select('id', 'name', 'image');
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->name . '%');
+        }
+
+        $storageDevices = $query->get();
+        return response()->json($storageDevices);
+    }
 }

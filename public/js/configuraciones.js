@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
     closeButton.innerHTML = '&times;';
     closeButton.addEventListener('click', function() {
         sidebar.classList.remove('active');
-        overlay.classList.remove('active');  // Línea corregida
+        overlay.classList.remove('active');
         document.body.classList.remove('sidebar-open');
     });
     
@@ -44,7 +44,183 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.classList.remove('sidebar-open');
     });
     document.body.appendChild(overlay);
-    
+
+    function findElementByText(selector, text) {
+        const elements = document.querySelectorAll(selector);
+        for (const element of elements) {
+            if (element.textContent.includes(text)) {
+                return element;
+            }
+        }
+        return null;
+    }
+
+    const componentTypeMap = {
+        'Procesador': 'procesador',
+        'Tarjeta gráfica': 'tarjeta_grafica',
+        'Placa Base': 'placa_base',
+        'Memoria RAM': 'memoria_ram',
+        'Almacenamiento': 'almacenamiento',
+        'Fuente de Alimentación': 'fuente_de_alimentacion'
+    };
+
+    function processUrlParameters() {
+        const params = new URLSearchParams(window.location.search);
+        
+        // Mapeo de parámetros URL a tipos de componentes
+        const paramToTypeMap = {
+            'procesador': 'Procesador',
+            'tarjeta-grafica': 'Tarjeta gráfica',
+            'placa-base': 'Placa Base',
+            'ram': 'Memoria RAM',
+            'almacenamiento': 'Almacenamiento',
+            'fuente-alimentacion': 'Fuente de Alimentación'
+        };
+        
+        // Para cada tipo de componente en la URL
+        for (const [param, type] of Object.entries(paramToTypeMap)) {
+            if (params.has(param)) {
+                const componentName = decodeURIComponent(params.get(param));
+                if (componentName) {
+                    // Buscar y preseleccionar este componente
+                    preSelectComponent(type, componentName);
+                }
+            }
+        }
+    }
+
+    function preSelectComponent(componentType, componentName) {
+        console.log(`Buscando componente: ${componentType} - ${componentName}`);
+        
+        // Determinar endpoint según el tipo de componente
+        let endpoint = '';
+        switch(componentType) {
+            case 'Procesador':
+                endpoint = '/api/v1/components/cpus';
+                break;
+            case 'Tarjeta gráfica':
+                endpoint = '/api/v1/components/graphic-cards';
+                break;
+            case 'Placa Base':
+                endpoint = '/api/v1/components/motherboards';
+                break;
+            case 'Fuente de Alimentación':
+                endpoint = '/api/v1/components/power-supplies';
+                break;
+            case 'Memoria RAM':
+                endpoint = '/api/v1/components/rams';
+                break;
+            case 'Almacenamiento':
+                endpoint = '/api/v1/components/storage-devices';
+                break;
+            default:
+                return;
+        }
+        
+        // Agregar parámetro de búsqueda por nombre
+        endpoint += `?name=${encodeURIComponent(componentName)}`;
+
+        console.log(`Buscando componente: ${componentType} - ${componentName}`);
+        
+        // Buscar en la API
+        fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al buscar el componente: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Si encontramos resultados
+            if (data && data.length > 0) {
+                // Tomar el primer componente que coincide
+                const component = data[0];
+                
+                // Buscar el botón correspondiente usando nuestra función auxiliar
+                const cardTitle = findElementByText('.card-title', componentType);
+                
+                if (cardTitle) {
+                    const cardBody = cardTitle.closest('.card-body');
+                    const targetButton = cardBody.querySelector('.btn-primary');
+                    const removeButton = cardBody.querySelector('.btn-remove');
+                    
+                    if (targetButton) {
+                        // Actualizar texto del botón
+                        targetButton.textContent = `Seleccionado: ${component.name}`;
+                        targetButton.classList.add('selected');
+                        
+                        // Mostrar el botón de quitar
+                        if (removeButton) {
+                            removeButton.style.display = 'block';
+                        }
+                        
+                        // Mostrar la imagen del componente
+                        const componentSlug = componentTypeMap[componentType];
+                        const imageElement = document.getElementById(`${componentSlug}-image`);
+                        if (imageElement && component.image) {
+                            imageElement.src = component.image;
+                            imageElement.style.display = 'block';
+                        }
+                        
+                        // Agregar input hidden con el ID
+                        let hiddenInput = document.querySelector(`input[name="${componentTypeMap[componentType]}"]`);
+                        if (!hiddenInput) {
+                            hiddenInput = document.createElement('input');
+                            hiddenInput.type = 'hidden';
+                            hiddenInput.name = componentTypeMap[componentType];
+                            document.querySelector('form').appendChild(hiddenInput);
+                        }
+                        hiddenInput.value = component.id;
+                        
+                        console.log(`Componente preseleccionado: ${componentType} - ${component.name} (ID: ${component.id})`);
+                    }
+                }
+            } else {
+                console.log(`No se encontraron componentes para: ${componentType} - ${componentName}`);
+            }
+        })
+        .catch(error => {
+            console.error(`Error al buscar el componente ${componentType}:`, error);
+        });
+    }
+
+    // Manejar botones de quitar componente
+    const removeButtons = document.querySelectorAll('.btn-remove');
+    removeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const componentSlug = this.dataset.component;
+            
+            // Encontrar el contenedor de la tarjeta
+            const cardBody = this.closest('.card-body');
+            const selectButton = cardBody.querySelector('.btn-primary');
+            
+            // Restablecer el texto del botón
+            selectButton.textContent = 'Seleccionar';
+            selectButton.classList.remove('selected');
+            
+            // Ocultar el botón de quitar
+            this.style.display = 'none';
+            
+            // Ocultar la imagen
+            const imageElement = document.getElementById(`${componentSlug}-image`);
+            if (imageElement) {
+                imageElement.style.display = 'none';
+            }
+            
+            // Eliminar el campo oculto
+            const hiddenInput = document.querySelector(`input[name="${componentSlug}"]`);
+            if (hiddenInput) {
+                hiddenInput.remove();
+            }
+        });
+    });
+
     // Agregar event listeners a todos los botones "Seleccionar"
     const selectButtons = document.querySelectorAll('.btn.btn-primary');
     selectButtons.forEach(button => {
@@ -103,43 +279,45 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para simular la obtención de componentes (reemplazar con AJAX real)
     function fetchComponents(componentType) {
         // Simulamos una petición asíncrona
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                // Datos de ejemplo según el tipo de componente
-                let components = [];
-                
-                switch(componentType) {
-                    case 'Procesador':
-                        components = [
-                            { id: 1, name: 'Intel Core i7-12700K', price: '389.99', image: '/path/to/cpu1.jpg' },
-                            { id: 2, name: 'AMD Ryzen 9 5900X', price: '349.99', image: '/path/to/cpu2.jpg' },
-                            { id: 3, name: 'Intel Core i5-12600K', price: '289.99', image: '/path/to/cpu3.jpg' }
-                        ];
-                        break;
-                    case 'Tarjeta gráfica':
-                        components = [
-                            { id: 4, name: 'NVIDIA RTX 3080', price: '699.99', image: '/path/to/gpu1.jpg' },
-                            { id: 5, name: 'AMD Radeon RX 6800 XT', price: '649.99', image: '/path/to/gpu2.jpg' },
-                            { id: 6, name: 'NVIDIA RTX 3070', price: '499.99', image: '/path/to/gpu3.jpg' }
-                        ];
-                        break;
-                    case 'Placa Base':
-                        components = [
-                            { id: 7, name: 'ASUS ROG Strix Z690-E', price: '349.99', image: '/path/to/mb1.jpg' },
-                            { id: 8, name: 'MSI MPG B550 Gaming Edge', price: '189.99', image: '/path/to/mb2.jpg' },
-                            { id: 9, name: 'Gigabyte Z690 Aorus Pro', price: '289.99', image: '/path/to/mb3.jpg' }
-                        ];
-                        break;
-                    // Agregar más casos para otros tipos de componentes
-                    default:
-                        components = [
-                            { id: 10, name: 'Componente de ejemplo 1', price: '99.99', image: '/path/to/default1.jpg' },
-                            { id: 11, name: 'Componente de ejemplo 2', price: '129.99', image: '/path/to/default2.jpg' }
-                        ];
-                }
-                
-                resolve(components);
-            }, 300); // Simular tiempo de carga
+        let endpoint = '';
+
+        switch(componentType) {
+            case 'Procesador':
+                endpoint = '/api/v1/components/cpus';
+                break;
+            case 'Tarjeta gráfica':
+                endpoint = '/api/v1/components/graphic-cards';
+                break;
+            case 'Placa Base':
+                endpoint = '/api/v1/components/motherboards';
+                break;
+            case 'Fuente de Alimentación':
+                endpoint = '/api/v1/components/power-supplies';
+                break;
+            case 'Memoria RAM':
+                endpoint = '/api/v1/components/rams';
+                break;
+            case 'Almacenamiento':
+                endpoint = '/api/v1/components/storage-devices';
+                break;
+        }
+
+        return fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Error al cargar los componentes: ${response.status}`);
+            }
+            return response.json();
+        })
+        .catch(error => {
+            console.error('Error al cargar los componentes:', error);
+            return [];
         });
     }
     
@@ -170,25 +348,41 @@ document.addEventListener('DOMContentLoaded', function () {
             // Encontrar el botón "Seleccionar" original correspondiente al tipo de componente
             const originalButtons = document.querySelectorAll('.card-body');
             let targetButton = null;
+            let targetCard = null;
             
             originalButtons.forEach(cardBody => {
                 const title = cardBody.querySelector('.card-title');
                 if (title && title.textContent === componentType) {
-                    targetButton = cardBody.querySelector('.btn');
+                    targetButton = cardBody.querySelector('.btn-primary');
+                    targetCard = cardBody.closest('.card');
                 }
             });
             
-            if (targetButton) {
+            if (targetButton && targetCard) {
                 // Actualizar el botón para mostrar el componente seleccionado
                 targetButton.textContent = `Seleccionado: ${component.name}`;
                 targetButton.classList.add('selected');
                 
+                // Mostrar el botón de quitar
+                const componentSlug = componentTypeMap[componentType];
+                const removeButton = targetCard.querySelector(`.btn-remove[data-component="${componentSlug}"]`);
+                if (removeButton) {
+                    removeButton.style.display = 'block';
+                }
+                
+                // Mostrar la imagen del componente
+                const imageElement = document.getElementById(`${componentSlug}-image`);
+                if (imageElement && component.image) {
+                    imageElement.src = component.image;
+                    imageElement.style.display = 'block';
+                }
+                
                 // Agregar un input oculto al formulario para guardar el ID del componente
-                let hiddenInput = document.querySelector(`input[name="${componentType.toLowerCase().replace(/\s+/g, '_')}"]`);
+                let hiddenInput = document.querySelector(`input[name="${componentSlug}"]`);
                 if (!hiddenInput) {
                     hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
-                    hiddenInput.name = componentType.toLowerCase().replace(/\s+/g, '_');
+                    hiddenInput.name = componentSlug;
                     document.querySelector('form').appendChild(hiddenInput);
                 }
                 hiddenInput.value = component.id;
@@ -209,4 +403,6 @@ document.addEventListener('DOMContentLoaded', function () {
         
         return card;
     }
+
+    processUrlParameters();
 });
