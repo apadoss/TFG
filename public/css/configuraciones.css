@@ -1,18 +1,68 @@
+/* Estilo para la sidebar */
 .components-sidebar {
     position: fixed;
     top: 0;
-    right: -400px;
-    width: 400px;
+    right: -100%;
+    width: 100%;
+    max-width: 400px;
     height: 100%;
     background-color: #fff;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 1050;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2);
     transition: right 0.3s ease;
+    z-index: 1001;
     overflow-y: auto;
 }
 
 .components-sidebar.active {
     right: 0;
+}
+
+.sidebar-header {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.sidebar-content {
+    padding: 15px;
+}
+
+.component-list {
+    display: grid;
+    grid-gap: 15px;
+}
+
+.component-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.component-image {
+    height: 150px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f9f9f9;
+}
+
+.component-body {
+    padding: 15px;
+}
+
+.component-price {
+    font-weight: bold;
+    color: #ff6b6b;
+    margin-bottom: 10px;
 }
 
 .sidebar-overlay {
@@ -22,7 +72,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1040;
+    z-index: 1000;
     display: none;
 }
 
@@ -30,78 +80,37 @@
     display: block;
 }
 
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
-    background-color: #f8f9fa;
-}
-
-.sidebar-header h3 {
-    margin: 0;
-    font-size: 1.25rem;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0 8px;
-}
-
-.sidebar-content {
-    padding: 20px;
-}
-
-.component-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-}
-
-.component-card {
-    border: 1px solid #eee;
-    border-radius: 5px;
-    overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.component-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-}
-
-.component-image {
-    height: 150px;
-    background-size: cover;
-    background-position: center;
-    background-color: #f0f0f0;
-}
-
-.component-body {
-    padding: 15px;
-}
-
-.component-body h4 {
-    margin: 0 0 10px;
-    font-size: 1rem;
-}
-
-.component-price {
-    font-weight: bold;
-    color: #28a745;
-    margin-bottom: 10px;
-}
-
 body.sidebar-open {
     overflow: hidden;
 }
 
-@media (max-width: 576px) {
+/* Estilo para las imágenes de componentes en las tarjetas */
+.component-image-container {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    overflow: hidden;
+}
+
+.component-image {
+    max-width: 100%;
+    max-height: 100%;
+    padding: 10px;
+    object-fit: contain;
+}
+
+/* Estilo para botones seleccionados */
+.btn.selected {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Responsividad para móviles */
+@media (max-width: 768px) {
     .components-sidebar {
-        width: 100%;
+        max-width: 100%;
     }
 }
