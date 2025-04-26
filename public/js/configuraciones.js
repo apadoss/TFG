@@ -3,6 +3,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const sidebar = document.createElement('div');
     sidebar.id = 'components-sidebar';
     sidebar.className = 'components-sidebar';
+
+    // Detectar altura del header de la página
+    const adjustSidebarPosition = () => {
+        // Buscar el header de la página
+        const siteHeader = document.querySelector('header') || document.querySelector('.navbar') || document.querySelector('.header');
+        
+        if (siteHeader) {
+            const headerHeight = siteHeader.offsetHeight;
+            sidebar.style.paddingTop = `${headerHeight}px`;
+            console.log(`Ajustando sidebar con padding-top: ${headerHeight}px`);
+        } else {
+            // Si no se encuentra el header, usar un valor predeterminado
+            sidebar.style.paddingTop = '70px';
+            console.log('No se encontró el header, usando padding-top predeterminado');
+        }
+    };
+
+    window.addEventListener('load', adjustSidebarPosition);
+    window.addEventListener('resize', adjustSidebarPosition);
     
     // Crear el header de la sidebar
     const sidebarHeader = document.createElement('div');
@@ -27,6 +46,20 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.classList.remove('sidebar-open');
     });
     
+    // Barra de búsqueda
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'search-container';
+    
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.className = 'search-input';
+    searchInput.placeholder = 'Buscar componente...';
+    searchInput.addEventListener('input', function() {
+        filterComponents(this.value);
+    });
+    
+    searchContainer.appendChild(searchInput);
+    
     // Contenedor para el contenido de los componentes
     const sidebarContent = document.createElement('div');
     sidebarContent.className = 'sidebar-content';
@@ -35,6 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
     sidebarHeader.appendChild(sidebarTitle);
     sidebarHeader.appendChild(closeButton);
     sidebar.appendChild(sidebarHeader);
+    sidebar.appendChild(searchContainer);
     sidebar.appendChild(sidebarContent);
     document.body.appendChild(sidebar);
     
@@ -44,6 +78,21 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.classList.remove('sidebar-open');
     });
     document.body.appendChild(overlay);
+
+    // Función para filtrar componentes según el texto de búsqueda
+    function filterComponents(searchText) {
+        const componentCards = document.querySelectorAll('.component-card');
+        const searchLower = searchText.toLowerCase();
+        
+        componentCards.forEach(card => {
+            const title = card.querySelector('h4').textContent.toLowerCase();
+            if (title.includes(searchLower)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
 
     function findElementByText(selector, text) {
         const elements = document.querySelectorAll(selector);
@@ -231,8 +280,18 @@ document.addEventListener('DOMContentLoaded', function () {
             // Obtener el tipo de componente desde el título de la card
             const componentType = this.closest('.card-body').querySelector('.card-title').textContent;
             
+            // Verificar si hay un componente ya seleccionado para mostrar en la barra de búsqueda
+            const isSelected = this.classList.contains('selected');
+            let selectedComponentName = '';
+            
+            if (isSelected) {
+                // Extraer el nombre del componente del texto del botón
+                const buttonText = this.textContent;
+                selectedComponentName = buttonText.replace('Seleccionado: ', '');
+            }
+            
             // Cargar los componentes según el tipo
-            loadComponents(componentType, sidebarContent);
+            loadComponents(componentType, sidebarContent, selectedComponentName);
             
             // Mostrar la sidebar y el overlay
             sidebar.classList.add('active');
@@ -242,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     // Función para cargar los componentes en la sidebar
-    function loadComponents(componentType, container) {
+    function loadComponents(componentType, container, selectedComponentName = '') {
         // Actualizar el título
         sidebarTitle.textContent = `Componentes: ${componentType}`;
         
@@ -252,8 +311,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Mostrar un indicador de carga
         container.innerHTML = '<p class="text-center">Cargando componentes...</p>';
         
+        // Colocar el nombre del componente seleccionado en la barra de búsqueda
+        searchInput.value = selectedComponentName;
+        
         // Aquí harías una petición AJAX para obtener los componentes desde el servidor
-        // Por ahora, simularemos la carga con una función
         fetchComponents(componentType).then(components => {
             // Limpiar el indicador de carga
             container.innerHTML = '';
@@ -273,12 +334,16 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             
             container.appendChild(componentList);
+            
+            // Filtrar los componentes si hay un término de búsqueda
+            if (selectedComponentName) {
+                filterComponents(selectedComponentName);
+            }
         });
     }
     
-    // Función para simular la obtención de componentes (reemplazar con AJAX real)
+    // Función para obtener los componentes
     function fetchComponents(componentType) {
-        // Simulamos una petición asíncrona
         let endpoint = '';
 
         switch(componentType) {
