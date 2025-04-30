@@ -50,6 +50,11 @@
     </div>
 
     <div class="h1">Especificaciones</div>
+    <div class="mt-4 mb-4">
+      <a href="{{ route('componentes.compare', ['type' => $request->segment(2), 'product1' => $product->id]) }}" class="btn btn-primary">
+        <i class="bi bi-arrow-left-right"></i>Comparar con otro componente
+      </a>
+    </div>
     <ul class="list-group">
         <li class="list-group-item">Nombre: {{$product->name}}</li>
         <li class="list-group-item">Marca: {{$product->brand}}</li>

@@ -15,6 +15,7 @@ Route::get('/prueba', function () {
 
 Route::get('/componentes/{type}', [ComponentesController::class, 'index'])->name('componentes.index');
 Route::get('/componentes/{type}/{id}', [ComponentesController::class, 'view'])->name('componentes.view');
+Route::get('/products/{type}/compare/{product1}/{product2?}', [ComponentesController::class, 'compare'])->name('componentes.compare');
 
 Route::get('/asesor-ia', [AIConsultantController::class, 'index'])->name('ai-consultant.index'); 
 Route::post('/asesor-ia/message', [AIConsultantController::class, 'sendMessage']);

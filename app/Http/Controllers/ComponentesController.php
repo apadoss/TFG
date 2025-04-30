@@ -82,7 +82,48 @@ class ComponentesController extends Controller
                 abort(404);
             }
 
-        return view('componentes.view', compact('product'));
+        return view('componentes.view', compact('product', 'request'));
+    }
+
+    public function compare($type, $product1Id, $product2Id = null) {
+        $product1 = null;
+        $product2 = null;
+        $allProducts = [];
+
+        switch ($type) {
+            case 'procesadores':
+                $model = Procesador::class;
+                break;
+            case 'tarjetas-graficas':
+                $model = TarjetaGrafica::class;
+                break;
+            case 'placas-base':
+                $model = PlacasBase::class;
+                break;
+            case 'almacenamiento':
+                $model = Almacenamiento::class;
+                break;
+            case 'ram':
+                $model = MemoriaRam::class;
+                break;
+            case 'fuentes-alimentacion':
+                $model = FuenteAlimentacion::class;
+                break;
+            case 'portatiles':
+                $model = Portatil::class;
+                break;
+            default:
+                abort(404);
+        }
+
+        $product1 = $model::findOrFail($product1Id);
+        $allProducts = $model::where('id', '!=', $product1Id)->get();
+
+        if ($product2Id) {
+            $product2 = $model::findOrFail($product2Id);
+        }
+
+        return view('componentes.compare', compact('product1', 'product2', 'allProducts', 'type'));
     }
 
     public function getCpus(Request $request) {
