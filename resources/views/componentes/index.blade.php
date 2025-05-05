@@ -11,6 +11,10 @@
     </div>
 </div>
 
+<div class="d-flex justify-content-center mt-4">
+    {{ $products->links('pagination::bootstrap-4') }}
+</div>
+
 <!-- Vista de tarjetas (cards) - visible por defecto -->
 <div id="cardsView" class="row">
     @foreach ($products as $product)
@@ -43,6 +47,10 @@
     @endforeach
 </div>
 
+<div class="d-flex justify-content-center mt-4">
+    {{ $products->links('pagination::bootstrap-4') }}
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const cardViewBtn = document.getElementById('cardViewBtn');
@@ -50,39 +58,77 @@
         const cardsView = document.getElementById('cardsView');
         const listView = document.getElementById('listView');
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewParam = urlParams.get('view');
+
+        if (viewParam === 'list') {
+            activateListView();
+        } else {
+            activateCardView();
+        }
+
         // Función para cambiar a vista de tarjetas
         cardViewBtn.addEventListener('click', function() {
-            cardsView.style.display = 'flex';
-            listView.style.display = 'none';
-            
-            // Actualizar estado de los botones
-            cardViewBtn.classList.add('active');
-            cardViewBtn.classList.remove('btn-secondary');
-            cardViewBtn.classList.add('btn-primary');
-            cardViewBtn.disabled = true;
-            
-            listViewBtn.classList.remove('active');
-            listViewBtn.classList.remove('btn-primary');
-            listViewBtn.classList.add('btn-secondary');
-            listViewBtn.disabled = false;
+            activateCardView();
+            updateUrlParam('cards');
         });
 
         // Función para cambiar a vista de lista
         listViewBtn.addEventListener('click', function() {
+            activateListView();
+            updateUrlParam('list');
+        });
+
+        // Función para activar vista de tarjetas
+        function activateCardView() {
+            cardsView.style.display = 'flex';
+            listView.style.display = 'none';
+            cardViewBtn.classList.add('active');
+            cardViewBtn.classList.remove('btn-secondary');
+            cardViewBtn.classList.add('btn-primary');
+            cardViewBtn.disabled = true;
+            listViewBtn.classList.remove('active');
+            listViewBtn.classList.remove('btn-primary');
+            listViewBtn.classList.add('btn-secondary');
+            listViewBtn.disabled = false;
+        }
+
+        // Función para activar vista de lista
+        function activateListView() {
             cardsView.style.display = 'none';
             listView.style.display = 'block';
-            
-            // Actualizar estado de los botones
             listViewBtn.classList.add('active');
             listViewBtn.classList.remove('btn-secondary');
             listViewBtn.classList.add('btn-primary');
             listViewBtn.disabled = true;
-            
             cardViewBtn.classList.remove('active');
             cardViewBtn.classList.remove('btn-primary');
             cardViewBtn.classList.add('btn-secondary');
             cardViewBtn.disabled = false;
-        });
-    });
+        }
+
+        // Función para actualizar el parámetro view en la URL
+        function updateUrlParam(viewType) {
+            const url = new URL(window.location);
+            url.searchParams.set('view', viewType);
+            history.replaceState({}, '', url);
+
+            updatePaginationLinks(viewType);
+        }
+
+        // Función para actualizar los enlaces de paginación
+        function updatePaginationLinks(viewType) {
+            const paginationLinks = document.querySelectorAll('.pagination a');
+            paginationLinks.forEach(link => {
+                const linkUrl = new URL(link.href);
+                linkUrl.searchParams.set('view', viewType);
+                link.href = linkUrl.toString();
+            });
+        }
+
+        if (viewParam) {
+            updatePaginationLinks(viewParam);
+        }
+});
 </script>
 @endsection
