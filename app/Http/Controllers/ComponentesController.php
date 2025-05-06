@@ -47,7 +47,7 @@ class ComponentesController extends Controller
             $query->where('name', 'like', '%' . $name . '%');
         }
         
-        $products = $query->get();
+        $products = $query->paginate(15)->appends($request->query());
 
         return view('componentes.index', compact('products'));
     }

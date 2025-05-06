@@ -27,7 +27,7 @@
                                 <i class="bi bi-memory me-2" style="font-size: 1.5rem;"></i>Memorias RAM
                             </a>
                             <a href="/componentes/fuentes-alimentacion" class="list-group-item list-group-item-action text-dark">
-                              Fuentes de Alimentación
+                                <i class="bi bi-lightning-charge me-2" style="font-size: 1.5rem;"></i>Fuentes de Alimentación
                             </a>
                             <a href="/componentes/portatiles" class="list-group-item list-group-item-action text-dark">
                                 <i class="bi bi-laptop me-2" style="font-size: 1.5rem;"></i>Portátiles

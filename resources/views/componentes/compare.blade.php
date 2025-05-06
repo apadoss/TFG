@@ -89,13 +89,13 @@
                     @elseif($type == 'tarjetas-graficas')
                         <tr>
                             <td>Memoria</td>
-                            <td>{{ $product1->memory }} GB</td>
-                            <td>{{ $product2->memory }} GB</td>
+                            <td>{{ $product1->vram }} GB</td>
+                            <td>{{ $product2->vram }} GB</td>
                         </tr>
                         <tr>
                             <td>Tipo de memoria</td>
-                            <td>{{ $product1->memory_type }}</td>
-                            <td>{{ $product2->memory_type }}</td>
+                            <td>{{ $product1->mem_type }}</td>
+                            <td>{{ $product2->mem_type }}</td>
                         </tr>
                         <!-- Añadir más propiedades específicas de tarjetas gráficas -->
                     @elseif($type == 'placas-base')
