@@ -10,6 +10,7 @@ use App\Models\componentes\MemoriaRam;
 use App\Models\componentes\FuenteAlimentacion;
 use App\Models\componentes\Portatil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ComponentesController extends Controller
 {
@@ -17,6 +18,7 @@ class ComponentesController extends Controller
         $segment = $request->segment(2);
         $name = $request->name;
         $products = [];
+
         switch ($segment) {
             case 'procesadores':
                 $query = Procesador::query();
@@ -46,6 +48,16 @@ class ComponentesController extends Controller
         if ($name) {
             $query->where('name', 'like', '%' . $name . '%');
         }
+
+        $table = $query->getModel()->getTable();
+
+        $uniqueIds = DB::table($table)
+                   ->select(DB::raw('MIN(id) as id'))
+                   ->groupBy('name')
+                   ->pluck('id')
+                   ->toArray();
+
+        $query->whereIn('id', $uniqueIds);
         
         $products = $query->paginate(15)->appends($request->query());
 
@@ -53,36 +65,65 @@ class ComponentesController extends Controller
     }
 
     public function view(Request $request) {
-        $segment = $request->segment(2);
+        $type = $request->segment(2);
         $product = null;
 
-        switch ($segment) {
+        switch ($type) {
             case 'procesadores':
                 $product = Procesador::find($request->id);
+                $model = new Procesador();
                 break;
             case 'tarjetas-graficas':
                 $product = TarjetaGrafica::find($request->id);
+                $model = new TarjetaGrafica();
                 break;
             case 'placas-base':
                 $product = PlacasBase::find($request->id);
+                $model = new PlacasBase();
                 break;
             case 'almacenamiento':
                 $product = Almacenamiento::find($request->id);
+                $model = new Almacenamiento();
                 break;
             case 'ram':
                 $product = MemoriaRam::find($request->id);
+                $model = new MemoriaRam();
                 break;
             case 'fuentes-alimentacion':
                 $product = FuenteAlimentacion::find($request->id);
+                $model = new FuenteAlimentacion();
                 break;
             case 'portatiles':
                 $product = Portatil::find($request->id);
+                $model = new Portatil();
                 break;
             default:
                 abort(404);
             }
+        
+        $table = $model->getTable();
+        $variants = DB::table($table)
+                        ->where('name', $product->name)
+                        ->get();
+        
+        $pricesByVendor = [];
+        $urlsByVendor = [];
 
-        return view('componentes.view', compact('product', 'request'));
+        foreach ($variants as $variant) {
+            if (isset($variant->vendor) && isset($variant->price)) {
+                $pricesByVendor[$variant->vendor] = $variant->price;
+                
+                // Guardamos también las URLs si están disponibles
+                if (isset($variant->url)) {
+                    $urlsByVendor[$variant->vendor] = $variant->url;
+                }
+            }
+        }
+
+        $product->prices_by_vendor = $pricesByVendor;
+        $product->urls_by_vendor = $urlsByVendor;
+
+        return view('componentes.view', compact('product', 'type'));
     }
 
     public function compare($type, $product1Id, $product2Id = null) {
