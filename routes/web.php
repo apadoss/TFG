@@ -4,14 +4,26 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ComponentesController;
 use App\Http\Controllers\AIConsultantController;
 use App\Http\Controllers\ConfiguracionesController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name("home");
 
-Route::get('/prueba', function () {
-    return view('prueba');
-})->name("prueba");
+
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name("register");
+Route::post('/register', [RegisterController::class, 'register'])->name("register.create");
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name("login");
+Route::post('/login', [LoginController::class, 'login'])->name("login.authenticate");
+
+Route::post('/logout', [LogoutController::class, 'logout'])->name("logout");
+
+Route::get('/login', function () {
+    return view('auth.login');
+})->name("login");
 
 Route::get('/componentes/{type}', [ComponentesController::class, 'index'])->name('componentes.index');
 Route::get('/componentes/{type}/{id}', [ComponentesController::class, 'view'])->name('componentes.view');
