@@ -7,7 +7,7 @@
 </select>
 
 <p class="mb-2">Tipo:</p>
-<select name="type" id="type" class="form-select">
+<select name="type-selector" id="type-selector" class="form-select">
     <option selected>Seleccione...</option>
     <option value="1">DDR5</option>
     <option value="2">DDR4</option>
@@ -81,3 +81,5 @@
         placeholder="Máx" 
         min="0">
 </div>
+
+<script src="{{ asset('js/filters/ram-filter.js') }}"></script>

@@ -1,12 +1,12 @@
 <label for="brand-selector">Marca:</label>
 <select id="brand-selector" class="form-select">
     <option selected>Seleccione...</option>
-    <option value="1">Corsair</option>
-    <option value="2">Seasonic</option>
-    <option value="3">MSI</option>
-    <option value="4">EVGA</option>
-    <option value="5">Asus</option>
-    <option value="6">Cooler Master</option>
+    <option value="Corsair">Corsair</option>
+    <option value="Seasonic">Seasonic</option>
+    <option value="MSI">MSI</option>
+    <option value="EVGA">EVGA</option>
+    <option value="Asus">Asus</option>
+    <option value="Cooler Master">Cooler Master</option>
 </select>
 
 <p class="mb-2">Potencia (W):</p>
@@ -53,3 +53,5 @@
         placeholder="Máx" 
         min="0">
 </div>
+
+<script src="{{ asset('js/filters/power-supply-filter.js') }}"></script>

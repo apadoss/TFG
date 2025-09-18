@@ -22,21 +22,111 @@ class ComponentesController extends Controller
         switch ($segment) {
             case 'procesadores':
                 $query = Procesador::query();
+
+                if ($request->socket) {
+                    $query->where('socket', $request->socket);
+                }
+                if ($request->cores_min) {
+                    $query->where('n_cores', '>=', $request->cores_min);
+                }
+                if ($request->cores_max) {
+                    $query->where('n_cores', '<=', $request->cores_max);
+                }
+                if ($request->clock_min) {
+                    $query->where('clock_speed', '>=', $request->clock_min);
+                }
+                if ($request->clock_max) {
+                    $query->where('clock_speed', '<=', $request->clock_max);
+                }
+                if ($request->igpu) {
+                    $query->where('integrated_graphics', true);
+                }
+
                 break;
             case 'tarjetas-graficas':
                 $query = TarjetaGrafica::query();
+
+                if ($request->vram_min) {
+                    $query->where('vram', '>=', $request->vram_min);
+                }
+                if ($request->vram_max) {
+                    $query->where('vram', '<=', $request->vram_max);
+                }
+                if ($request->mem_type) {
+                    $query->where('mem_type', $request->mem_type);
+                }
+                if ($request->interface) {
+                    $query->where('interface', $request->interface);
+                }
+
                 break;
             case 'placas-base':
                 $query = PlacasBase::query();
+
+                if ($request->socket) {
+                    $query->where('socket', $request->socket);
+                }
+                if ($request->form_factor) {
+                    $query->where('form_factor', $request->form_factor);
+                }
+                if ($request->chipset) {
+                    $query->where('chipset', $request->chipset);
+                } 
+
                 break;
             case 'almacenamiento':
                 $query = Almacenamiento::query();
+
+                if ($request->type) {
+                    $query->where('type', $request->type);
+                }
+                if ($request->capacity_min) {
+                    $query->where('capacity', '>=', $request->capacity_min);
+                }
+                if ($request->capacity_max) {
+                    $query->where('capacity', '<=', $request->capacity_max);
+                }
+
                 break;
             case 'ram':
                 $query = MemoriaRam::query();
+
+                if ($request->type) {
+                    $query->where('type', $request->type);
+                }
+                if ($request->speed_min) {
+                    $query->where('speed', '>=', $request->speed_min);
+                }
+                if ($request->speed_max) {
+                    $query->where('speed', '<=', $request->speed_max);
+                }
+                if ($request->latency_min) {
+                    $query->where('latency', '>=', $request->latency_min);
+                }
+                if ($request->latency_max) {
+                    $query->where('latency', '<=', $request->latency_max);
+                }
+                if ($request->capacity_min) {
+                    $query->where('capacity', '>=', $request->capacity_min);
+                }
+                if ($request->capacity_max) {
+                    $query->where('capacity', '<=', $request->capacity_max);
+                }
+
                 break;
             case 'fuentes-alimentacion':
                 $query = FuenteAlimentacion::query();
+
+                if ($request->power_min) {
+                    $query->where('power', '>=', $request->power_min);
+                }
+                if ($request->power_max) {
+                    $query->where('power', '<=', $request->power_max);
+                }
+                if ($request->certification) {
+                    $query->where('certification', $request->certification);
+                }
+
                 break;
             case 'portatiles':
                 $query = Portatil::query();
@@ -44,9 +134,21 @@ class ComponentesController extends Controller
             default:
                 abort(404);
         }
+
+        if ($request->brand) {
+                $query->where('brand', $request->brand);
+        }
         
         if ($name) {
             $query->where('name', 'like', '%' . $name . '%');
+        }
+
+        if ($request->price_min) {
+            $query->where('price', '>=', $request->price_min);
+        }
+
+        if ($request->price_max) {
+            $query->where('price', '<=', $request->price_max);
         }
 
         $table = $query->getModel()->getTable();
@@ -168,7 +270,19 @@ class ComponentesController extends Controller
     }
 
     public function getCpus(Request $request) {
-        $query = Procesador::select('id', 'name', 'image');
+        $query = Procesador::query();
+        $table = $query->getModel()->getTable();
+
+        $query = Procesador::query()
+        ->join(DB::raw("(
+            SELECT name, MIN(price) as min_price 
+            FROM {$table} 
+            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
+            GROUP BY name
+        ) as min_prices"), function($join) use ($table) {
+            $join->on("{$table}.name", '=', 'min_prices.name')
+             ->on("{$table}.price", '=', 'min_prices.min_price');
+        });
 
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -179,7 +293,19 @@ class ComponentesController extends Controller
     }
 
     public function getGraphicsCards(Request $request) {
-        $query = TarjetaGrafica::select('id', 'name', 'image');
+        $query = TarjetaGrafica::query();
+        $table = $query->getModel()->getTable();
+
+        $query = TarjetaGrafica::query()
+        ->join(DB::raw("(
+            SELECT name, MIN(price) as min_price 
+            FROM {$table} 
+            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
+            GROUP BY name
+        ) as min_prices"), function($join) use ($table) {
+            $join->on("{$table}.name", '=', 'min_prices.name')
+             ->on("{$table}.price", '=', 'min_prices.min_price');
+        });
 
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -190,7 +316,19 @@ class ComponentesController extends Controller
     }
 
     public function getMotherboards(Request $request) {
-        $query = PlacasBase::select('id', 'name', 'image');
+        $query = PlacasBase::query();
+        $table = $query->getModel()->getTable();
+
+        $query = PlacasBase::query()
+        ->join(DB::raw("(
+            SELECT name, MIN(price) as min_price 
+            FROM {$table} 
+            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
+            GROUP BY name
+        ) as min_prices"), function($join) use ($table) {
+            $join->on("{$table}.name", '=', 'min_prices.name')
+             ->on("{$table}.price", '=', 'min_prices.min_price');
+        });
 
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -201,7 +339,19 @@ class ComponentesController extends Controller
     }
 
     public function getPowerSupplies(Request $request) {
-        $query = FuenteAlimentacion::select('id', 'name', 'image');
+        $query = FuenteAlimentacion::query();
+        $table = $query->getModel()->getTable();
+
+        $query = FuenteAlimentacion::query()
+        ->join(DB::raw("(
+            SELECT name, MIN(price) as min_price 
+            FROM {$table} 
+            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
+            GROUP BY name
+        ) as min_prices"), function($join) use ($table) {
+            $join->on("{$table}.name", '=', 'min_prices.name')
+             ->on("{$table}.price", '=', 'min_prices.min_price');
+        });
 
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -212,7 +362,19 @@ class ComponentesController extends Controller
     }
 
     public function getRams(Request $request) {
-        $query = MemoriaRam::select('id', 'name', 'image');
+        $query = MemoriaRam::query();
+        $table = $query->getModel()->getTable();
+
+        $query = MemoriaRam::query()
+        ->join(DB::raw("(
+            SELECT name, MIN(price) as min_price 
+            FROM {$table} 
+            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
+            GROUP BY name
+        ) as min_prices"), function($join) use ($table) {
+            $join->on("{$table}.name", '=', 'min_prices.name')
+             ->on("{$table}.price", '=', 'min_prices.min_price');
+        });
 
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
@@ -223,7 +385,19 @@ class ComponentesController extends Controller
     }
 
     public function getStorageDevices(Request $request) {
-        $query = Almacenamiento::select('id', 'name', 'image');
+        $query = Almacenamiento::query();
+        $table = $query->getModel()->getTable();
+
+        $query = Almacenamiento::query()
+        ->join(DB::raw("(
+            SELECT name, MIN(price) as min_price 
+            FROM {$table} 
+            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
+            GROUP BY name
+        ) as min_prices"), function($join) use ($table) {
+            $join->on("{$table}.name", '=', 'min_prices.name')
+             ->on("{$table}.price", '=', 'min_prices.min_price');
+        });
 
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');

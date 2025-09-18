@@ -1,17 +1,17 @@
 <label for="brand-selector">Marca:</label>
 <select id="brand-selector" class="form-select">
     <option selected>Seleccione...</option>
-    <option value="1">Intel</option>
-    <option value="2">AMD</option>
+    <option value="Intel">Intel</option>
+    <option value="AMD">AMD</option>
 </select>
 
 <label for="socket-selector" class="mb-2">Socket:</label>
 <select id="socket-selector" class="form-select">
     <option selected>Seleccione...</option>
-    <option value="1">LGA 1700</option>
-    <option value="2">FCLGA1851</option>
-    <option value="3">AM4</option>
-    <option value="4">AM5</option>
+    <option value="LGA 1700">LGA 1700</option>
+    <option value="FCLGA1851">FCLGA1851</option>
+    <option value="AM4">AM4</option>
+    <option value="AM5">AM5</option>
 </select>
 
 <p class="mb-2">Nº núcleos:</p>
@@ -70,3 +70,5 @@
         <input type="checkbox" class="form-check-input" name="" id="" value="checkedValue"> Gráficos Integrados
     </label>
 </div>
+
+<script src="{{ asset('js/filters/cpu-filter.js') }}"></script>

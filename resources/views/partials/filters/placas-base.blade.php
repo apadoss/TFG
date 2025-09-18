@@ -1,9 +1,10 @@
 <label for="brand-selector">Marca:</label>
 <select id="brand-selector" class="form-select">
     <option selected>Seleccione...</option>
-    <option value="1">Asus</option>
-    <option value="2">MSI</option>
-    <option value="3">Gigabyte</option>
+    <option value="Asus">Asus</option>
+    <option value="MSI">MSI</option>
+    <option value="Gigabyte">Gigabyte</option>
+    <option value="ASRock">ASRock</option>
 </select>
 
 <label for="socket-selector" class="mb-2">Socket:</label>
@@ -18,10 +19,10 @@
 <label for="form-factor-selector" class="mb-2">Factor de forma:</label>
 <select id="form-factor-selector" class="form-select">
     <option selected>Seleccione...</option>
-    <option value="1">ATX</option>
-    <option value="2">Micro ATX</option>
-    <option value="3">Mini ITX</option>
-    <option value="4">Extended ATX</option>
+    <option value="ATX">ATX</option>
+    <option value="Micro ATX">Micro ATX</option>
+    <option value="Mini ITX">Mini ITX</option>
+    <option value="Extended ATX">Extended ATX</option>
 </select>
 
 <label for="chipset-selector" class="mb-2">Chipset:</label>
@@ -49,3 +50,5 @@
         placeholder="Máx" 
         min="0">
 </div>
+
+<script src="{{ asset('js/filters/motherboard-filter.js') }}"></script>

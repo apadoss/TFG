@@ -1,18 +1,18 @@
 <label for="brand-selector">Marca:</label>
 <select id="brand-selector" class="form-select">
     <option selected>Seleccione...</option>
-    <option value="1">Western Digital</option>
-    <option value="2">Samsung</option>
-    <option value="3">Seagate</option>
-    <option value="4">Kingston</option>
-    <option value="5">Toshiba</option>
+    <option value="Western Digital">Western Digital</option>
+    <option value="Samsung">Samsung</option>
+    <option value="Seagate">Seagate</option>
+    <option value="Kingston">Kingston</option>
+    <option value="Toshiba">Toshiba</option>
 </select>
 
 <label for="type-selector">Tipo:</label>
 <select id="type-selector" class="form-select">
     <option selected>Seleccione...</option>
-    <option value="1">HDD</option>
-    <option value="2">SSD</option>
+    <option value="HDD">HDD</option>
+    <option value="SSD">SSD</option>
 </select>
 
 <p class="mb-2">Capacidad (TB):</p>
@@ -48,3 +48,5 @@
         placeholder="Máx" 
         min="0">
 </div>
+
+<script src="{{ asset('js/filters/storage-filter.js') }}"></script>
