@@ -24,11 +24,11 @@
                         <i class="bi bi-sort-down me-1"></i>Ordenar
                     </button>
                     <ul class="dropdown-menu shadow border-0" aria-labelledby="sortDropdown">
+                        <li><a class="dropdown-item" href="#">Sin ordenar</a></li>
                         <li><a class="dropdown-item" href="#">Precio: menor a mayor</a></li>
                         <li><a class="dropdown-item" href="#">Precio: mayor a menor</a></li>
                         <li><a class="dropdown-item" href="#">Nombre: A-Z</a></li>
                         <li><a class="dropdown-item" href="#">Nombre: Z-A</a></li>
-                        <li><a class="dropdown-item" href="#">Más populares</a></li>
                     </ul>
                 </div>
 
@@ -232,101 +232,5 @@
 }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const cardViewBtn = document.getElementById('cardViewBtn');
-    const listViewBtn = document.getElementById('listViewBtn');
-    const cardsView = document.getElementById('cardsView');
-    const listView = document.getElementById('listView');
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const viewParam = urlParams.get('view');
-
-    if (viewParam === 'list') {
-        activateListView();
-    } else {
-        activateCardView();
-    }
-
-    // Función para cambiar a vista de tarjetas
-    cardViewBtn.addEventListener('click', function() {
-        activateCardView();
-        updateUrlParam('cards');
-    });
-
-    // Función para cambiar a vista de lista
-    listViewBtn.addEventListener('click', function() {
-        activateListView();
-        updateUrlParam('list');
-    });
-
-    // Función para activar vista de tarjetas
-    function activateCardView() {
-        cardsView.classList.remove('d-none');
-        listView.classList.add('d-none');
-        cardViewBtn.classList.add('active');
-        cardViewBtn.classList.remove('btn-secondary');
-        cardViewBtn.classList.add('btn-primary');
-        cardViewBtn.disabled = true;
-        listViewBtn.classList.remove('active');
-        listViewBtn.classList.remove('btn-primary');
-        listViewBtn.classList.add('btn-secondary');
-        listViewBtn.disabled = false;
-    }
-
-    // Función para activar vista de lista
-    function activateListView() {
-        cardsView.classList.add('d-none');
-        listView.classList.remove('d-none');
-        listViewBtn.classList.add('active');
-        listViewBtn.classList.remove('btn-secondary');
-        listViewBtn.classList.add('btn-primary');
-        listViewBtn.disabled = true;
-        cardViewBtn.classList.remove('active');
-        cardViewBtn.classList.remove('btn-primary');
-        cardViewBtn.classList.add('btn-secondary');
-        cardViewBtn.disabled = false;
-    }
-
-    // Función para actualizar el parámetro view en la URL
-    function updateUrlParam(viewType) {
-        const url = new URL(window.location);
-        url.searchParams.set('view', viewType);
-        history.replaceState({}, '', url);
-
-        updatePaginationLinks(viewType);
-    }
-
-    // Función para actualizar los enlaces de paginación
-    function updatePaginationLinks(viewType) {
-        const paginationLinks = document.querySelectorAll('.pagination a');
-        paginationLinks.forEach(link => {
-            if (link.href) {
-                const linkUrl = new URL(link.href);
-                linkUrl.searchParams.set('view', viewType);
-                link.href = linkUrl.toString();
-            }
-        });
-    }
-
-    if (viewParam) {
-        updatePaginationLinks(viewParam);
-    }
-
-    // Inicializar tooltips de Bootstrap
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-    
-    // Agregar producto a comparación
-    const compareButtons = document.querySelectorAll('.compare-btn');
-    compareButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Aquí puedes implementar la lógica para agregar a comparación
-            alert('Producto añadido a la comparación');
-        });
-    });
-});
-</script>
+<script src={{asset('js/components-index.js')}}></script>
 @endsection

@@ -160,6 +160,8 @@ class ComponentesController extends Controller
                    ->toArray();
 
         $query->whereIn('id', $uniqueIds);
+
+        $query = $this->sortComponents($query, $request);
         
         $products = $query->paginate(15)->appends($request->query());
 
@@ -269,141 +271,86 @@ class ComponentesController extends Controller
         return view('componentes.compare', compact('product1', 'product2', 'allProducts', 'type'));
     }
 
-    public function getCpus(Request $request) {
-        $query = Procesador::query();
+    /**
+     * Método privado para obtener componentes de la base de datos
+     */
+    private function getComponents($model, Request $request)
+    {
+        $query = $model::query();
         $table = $query->getModel()->getTable();
-
-        $query = Procesador::query()
-        ->join(DB::raw("(
-            SELECT name, MIN(price) as min_price 
-            FROM {$table} 
-            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
-            GROUP BY name
-        ) as min_prices"), function($join) use ($table) {
-            $join->on("{$table}.name", '=', 'min_prices.name')
-             ->on("{$table}.price", '=', 'min_prices.min_price');
-        });
-
+        
+        // Construir la subconsulta con filtros si existen
+        $subQuery = "SELECT name, MIN(price) as min_price FROM {$table}";
+        if ($request->has('name')) {
+            $subQuery .= " WHERE name LIKE '%" . addslashes($request->name) . "%'";
+        }
+        $subQuery .= " GROUP BY name";
+        
+        $query = $model::query()
+            ->join(DB::raw("({$subQuery}) as min_prices"), function($join) use ($table) {
+                $join->on("{$table}.name", '=', 'min_prices.name')
+                     ->on("{$table}.price", '=', 'min_prices.min_price');
+            });
+        
+        // Aplicar filtro de nombre si existe
         if ($request->has('name')) {
             $query->where('name', 'like', '%' . $request->name . '%');
         }
 
-        $cpus = $query->get();
+        return $query->get();
+    }
+
+    /**
+     * Método privado para ordenar componentes
+     */
+
+    private function sortComponents($query, $request) {
+        $sortBy = $request->get('sort_by', '');
+        $sortOrder = $request->get('sort_order', '');
+
+        $allowedSorts = ['name', 'price'];
+        $allowedOrders = ['asc', 'desc'];
+
+        if (in_array($sortBy, $allowedSorts) && in_array($sortOrder, $allowedOrders)) {
+            $query->orderBy($sortBy, $sortOrder);
+        }
+
+        return $query;
+    } 
+
+    public function getCpus(Request $request) 
+    {
+        $cpus = $this->getComponents(Procesador::class, $request);
         return response()->json($cpus);
     }
-
-    public function getGraphicsCards(Request $request) {
-        $query = TarjetaGrafica::query();
-        $table = $query->getModel()->getTable();
-
-        $query = TarjetaGrafica::query()
-        ->join(DB::raw("(
-            SELECT name, MIN(price) as min_price 
-            FROM {$table} 
-            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
-            GROUP BY name
-        ) as min_prices"), function($join) use ($table) {
-            $join->on("{$table}.name", '=', 'min_prices.name')
-             ->on("{$table}.price", '=', 'min_prices.min_price');
-        });
-
-        if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        $graphicsCards = $query->get();
+    
+    public function getGraphicsCards(Request $request) 
+    {
+        $graphicsCards = $this->getComponents(TarjetaGrafica::class, $request);
         return response()->json($graphicsCards);
     }
-
-    public function getMotherboards(Request $request) {
-        $query = PlacasBase::query();
-        $table = $query->getModel()->getTable();
-
-        $query = PlacasBase::query()
-        ->join(DB::raw("(
-            SELECT name, MIN(price) as min_price 
-            FROM {$table} 
-            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
-            GROUP BY name
-        ) as min_prices"), function($join) use ($table) {
-            $join->on("{$table}.name", '=', 'min_prices.name')
-             ->on("{$table}.price", '=', 'min_prices.min_price');
-        });
-
-        if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        $motherboards = $query->get();
+    
+    public function getMotherboards(Request $request) 
+    {
+        $motherboards = $this->getComponents(PlacasBase::class, $request);
         return response()->json($motherboards);
     }
-
-    public function getPowerSupplies(Request $request) {
-        $query = FuenteAlimentacion::query();
-        $table = $query->getModel()->getTable();
-
-        $query = FuenteAlimentacion::query()
-        ->join(DB::raw("(
-            SELECT name, MIN(price) as min_price 
-            FROM {$table} 
-            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
-            GROUP BY name
-        ) as min_prices"), function($join) use ($table) {
-            $join->on("{$table}.name", '=', 'min_prices.name')
-             ->on("{$table}.price", '=', 'min_prices.min_price');
-        });
-
-        if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        $powerSupplies = $query->get();
+    
+    public function getPowerSupplies(Request $request) 
+    {
+        $powerSupplies = $this->getComponents(FuenteAlimentacion::class, $request);
         return response()->json($powerSupplies);
     }
-
-    public function getRams(Request $request) {
-        $query = MemoriaRam::query();
-        $table = $query->getModel()->getTable();
-
-        $query = MemoriaRam::query()
-        ->join(DB::raw("(
-            SELECT name, MIN(price) as min_price 
-            FROM {$table} 
-            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
-            GROUP BY name
-        ) as min_prices"), function($join) use ($table) {
-            $join->on("{$table}.name", '=', 'min_prices.name')
-             ->on("{$table}.price", '=', 'min_prices.min_price');
-        });
-
-        if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        $rams = $query->get();
+    
+    public function getRams(Request $request) 
+    {
+        $rams = $this->getComponents(MemoriaRam::class, $request);
         return response()->json($rams);
     }
-
-    public function getStorageDevices(Request $request) {
-        $query = Almacenamiento::query();
-        $table = $query->getModel()->getTable();
-
-        $query = Almacenamiento::query()
-        ->join(DB::raw("(
-            SELECT name, MIN(price) as min_price 
-            FROM {$table} 
-            " . ($request->has('name') ? "WHERE name LIKE '%" . addslashes($request->name) . "%'" : "") . "
-            GROUP BY name
-        ) as min_prices"), function($join) use ($table) {
-            $join->on("{$table}.name", '=', 'min_prices.name')
-             ->on("{$table}.price", '=', 'min_prices.min_price');
-        });
-
-        if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        $storageDevices = $query->get();
+    
+    public function getStorageDevices(Request $request) 
+    {
+        $storageDevices = $this->getComponents(Almacenamiento::class, $request);
         return response()->json($storageDevices);
     }
 }
