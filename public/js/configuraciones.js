@@ -79,6 +79,41 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.body.appendChild(overlay);
 
+    function getConfigurationForm() {
+    const form = document.getElementById('configuracion-form');
+    if (!form) {
+        console.error('No se encontró el formulario de configuraciones');
+        return null;
+    }
+    
+    console.log('Formulario de configuraciones encontrado:', form);
+    return form;
+}
+
+    function createOrUpdateHiddenInput(componentSlug, componentId) {
+        const form = getConfigurationForm();
+        if (!form) return false;
+        
+        let hiddenInput = form.querySelector(`input[name="${componentSlug}"]`);
+        
+        if (!hiddenInput) {
+            hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = componentSlug;
+            form.appendChild(hiddenInput);
+            console.log(`Input hidden creado: ${componentSlug}`);
+        }
+
+        hiddenInput.value = componentId;
+        console.log(`Input hidden actualizado: ${componentSlug} = ${componentId}`);
+
+        // Verificar que se agregó correctamente
+        const verification = form.querySelector(`input[name="${componentSlug}"]`);
+        console.log('Verificación - Input encontrado:', verification);
+
+        return true;
+    }
+
     // Función para filtrar componentes según el texto de búsqueda
     function filterComponents(searchText) {
         const componentCards = document.querySelectorAll('.component-card');
@@ -186,47 +221,32 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.json();
         })
         .then(data => {
-            // Si encontramos resultados
             if (data && data.length > 0) {
-                // Tomar el primer componente que coincide
                 const component = data[0];
-                
-                // Buscar el botón correspondiente usando nuestra función auxiliar
+
                 const cardTitle = findElementByText('.card-title', componentType);
-                
+
                 if (cardTitle) {
                     const cardBody = cardTitle.closest('.card-body');
                     const targetButton = cardBody.querySelector('.btn-primary');
                     const removeButton = cardBody.querySelector('.btn-remove');
-                    
+
                     if (targetButton) {
-                        // Actualizar texto del botón
                         targetButton.textContent = `Seleccionado: ${component.name}`;
                         targetButton.classList.add('selected');
-                        
-                        // Mostrar el botón de quitar
+
                         if (removeButton) {
                             removeButton.style.display = 'block';
                         }
-                        
-                        // Mostrar la imagen del componente
+
                         const componentSlug = componentTypeMap[componentType];
                         const imageElement = document.getElementById(`${componentSlug}-image`);
                         if (imageElement && component.image) {
                             imageElement.src = component.image;
                             imageElement.style.display = 'block';
                         }
-                        
-                        // Agregar input hidden con el ID
-                        let hiddenInput = document.querySelector(`input[name="${componentTypeMap[componentType]}"]`);
-                        if (!hiddenInput) {
-                            hiddenInput = document.createElement('input');
-                            hiddenInput.type = 'hidden';
-                            hiddenInput.name = componentTypeMap[componentType];
-                            document.querySelector('form').appendChild(hiddenInput);
-                        }
-                        hiddenInput.value = component.id;
-                        
+
+                        createOrUpdateHiddenInput(componentSlug, component.id);
                         console.log(`Componente preseleccionado: ${componentType} - ${component.name} (ID: ${component.id})`);
                     }
                 }
@@ -314,7 +334,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Colocar el nombre del componente seleccionado en la barra de búsqueda
         searchInput.value = selectedComponentName;
         
-        // Aquí harías una petición AJAX para obtener los componentes desde el servidor
         fetchComponents(componentType).then(components => {
             // Limpiar el indicador de carga
             container.innerHTML = '';
@@ -414,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const originalButtons = document.querySelectorAll('.card-body');
             let targetButton = null;
             let targetCard = null;
-            
+
             originalButtons.forEach(cardBody => {
                 const title = cardBody.querySelector('.card-title');
                 if (title && title.textContent === componentType) {
@@ -422,50 +441,44 @@ document.addEventListener('DOMContentLoaded', function () {
                     targetCard = cardBody.closest('.card');
                 }
             });
-            
+
             if (targetButton && targetCard) {
                 // Actualizar el botón para mostrar el componente seleccionado
                 targetButton.textContent = `Seleccionado: ${component.name}`;
                 targetButton.classList.add('selected');
-                
+
                 // Mostrar el botón de quitar
                 const componentSlug = componentTypeMap[componentType];
                 const removeButton = targetCard.querySelector(`.btn-remove[data-component="${componentSlug}"]`);
                 if (removeButton) {
                     removeButton.style.display = 'block';
                 }
-                
+
                 // Mostrar la imagen del componente
                 const imageElement = document.getElementById(`${componentSlug}-image`);
                 if (imageElement && component.image) {
                     imageElement.src = component.image;
                     imageElement.style.display = 'block';
                 }
-                
-                // Agregar un input oculto al formulario para guardar el ID del componente
-                let hiddenInput = document.querySelector(`input[name="${componentSlug}"]`);
-                if (!hiddenInput) {
-                    hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = componentSlug;
-                    document.querySelector('form').appendChild(hiddenInput);
+
+                // AQUÍ ESTÁ EL FIX PRINCIPAL: Crear el input hidden correctamente
+                const success = createOrUpdateHiddenInput(componentSlug, component.id);
+                if (success) {
+                    // Cerrar la sidebar solo si el input se creó correctamente
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    document.body.classList.remove('sidebar-open');
                 }
-                hiddenInput.value = component.id;
-                
-                // Cerrar la sidebar
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-                document.body.classList.remove('sidebar-open');
             }
         });
-        
+
         cardBody.appendChild(cardTitle);
         cardBody.appendChild(cardPrice);
         cardBody.appendChild(selectBtn);
-        
+
         card.appendChild(cardImage);
         card.appendChild(cardBody);
-        
+
         return card;
     }
 
