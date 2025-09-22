@@ -274,27 +274,31 @@ class ComponentesController extends Controller
     /**
      * Método privado para obtener componentes de la base de datos
      */
-    private function getComponents($model, Request $request)
+    private function getComponents($modelOrQuery, Request $request)
     {
-        $query = $model::query();
+        if (is_string($modelOrQuery)) {
+            $query = $modelOrQuery::query();
+        } else {
+            $query = $modelOrQuery;
+        }
+
         $table = $query->getModel()->getTable();
         
-        // Construir la subconsulta con filtros si existen
+        // Construir la subconsulta con precios minimos
         $subQuery = "SELECT name, MIN(price) as min_price FROM {$table}";
         if ($request->has('name')) {
             $subQuery .= " WHERE name LIKE '%" . addslashes($request->name) . "%'";
         }
         $subQuery .= " GROUP BY name";
         
-        $query = $model::query()
-            ->join(DB::raw("({$subQuery}) as min_prices"), function($join) use ($table) {
-                $join->on("{$table}.name", '=', 'min_prices.name')
-                     ->on("{$table}.price", '=', 'min_prices.min_price');
-            });
+        $query->join(DB::raw("({$subQuery}) as min_prices"), function($join) use ($table) {
+            $join->on("{$table}.name", '=', 'min_prices.name')
+                 ->on("{$table}.price", '=', 'min_prices.min_price');
+        });
         
         // Aplicar filtro de nombre si existe
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
+            $query->where("{$table}.name", 'like', '%' . $request->name . '%');
         }
 
         return $query->get();
@@ -320,7 +324,16 @@ class ComponentesController extends Controller
 
     public function getCpus(Request $request) 
     {
-        $cpus = $this->getComponents(Procesador::class, $request);
+        $query = Procesador::query();
+
+        if ($request->has('motherboard_id')) {
+            $motherboard = PlacasBase::find($request->motherboard_id);
+            if ($motherboard) {
+                $query->where('socket', $motherboard->socket);
+            }
+        }
+    
+        $cpus = $this->getComponents($query, $request);
         return response()->json($cpus);
     }
     
@@ -332,7 +345,16 @@ class ComponentesController extends Controller
     
     public function getMotherboards(Request $request) 
     {
-        $motherboards = $this->getComponents(PlacasBase::class, $request);
+        $query = PlacasBase::query();
+
+        if ($request->has('cpu_id')) {
+            $cpu = Procesador::find($request->cpu_id);
+            if ($cpu) {
+                $query->where('socket', $cpu->socket);
+            }
+        }
+    
+        $motherboards = $this->getComponents($query, $request);
         return response()->json($motherboards);
     }
     

@@ -364,16 +364,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para obtener los componentes
     function fetchComponents(componentType) {
         let endpoint = '';
+        let params = new URLSearchParams();
 
         switch(componentType) {
             case 'Procesador':
                 endpoint = '/api/v1/components/cpus';
+                const mbId = getMotherboardId();
+                if (mbId) params.append('motherboard_id', mbId);
                 break;
             case 'Tarjeta gráfica':
                 endpoint = '/api/v1/components/graphic-cards';
                 break;
             case 'Placa Base':
                 endpoint = '/api/v1/components/motherboards';
+                const cpu = getCpuId();
+                if (cpu) params.append('cpu_id', cpu);
                 break;
             case 'Fuente de Alimentación':
                 endpoint = '/api/v1/components/power-supplies';
@@ -386,7 +391,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
         }
 
-        return fetch(endpoint, {
+        const url = params.toString() ? `${endpoint}?${params.toString()}` : endpoint;
+        console.log(`Endpoint: ${url}`);
+
+        return fetch(url, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -403,6 +411,16 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error al cargar los componentes:', error);
             return [];
         });
+    }
+
+    function getCpuId() {
+        const input = document.querySelector('input[name="procesador"]');
+        return input ? input.value : null;
+    }
+
+    function getMotherboardId() {
+        const input = document.querySelector('input[name="placa_base"]');
+        return input ? input.value : null;
     }
     
     // Función para crear una tarjeta de componente
@@ -461,10 +479,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     imageElement.style.display = 'block';
                 }
 
-                // AQUÍ ESTÁ EL FIX PRINCIPAL: Crear el input hidden correctamente
                 const success = createOrUpdateHiddenInput(componentSlug, component.id);
                 if (success) {
-                    // Cerrar la sidebar solo si el input se creó correctamente
                     sidebar.classList.remove('active');
                     overlay.classList.remove('active');
                     document.body.classList.remove('sidebar-open');
