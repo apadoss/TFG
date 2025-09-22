@@ -360,8 +360,19 @@ class ComponentesController extends Controller
     
     public function getPowerSupplies(Request $request) 
     {
-        $powerSupplies = $this->getComponents(FuenteAlimentacion::class, $request);
-        return response()->json($powerSupplies);
+        $query = FuenteAlimentacion::query();
+
+        if ($request->has('cpu_id') && $request->has('gpu_id')) {
+            $cpu = Procesador::find($request->cpu_id);
+            $gpu = TarjetaGrafica::find($request->gpu_id);
+
+            if ($cpu && $gpu) {
+                $requiredWattage = (($gpu->tdp + $cpu->tdp) + 75) * 1.5;
+                $query->where('power', '>=', $requiredWattage);
+            }
+        }
+    
+        return response()->json($query->get());
     }
     
     public function getRams(Request $request) 

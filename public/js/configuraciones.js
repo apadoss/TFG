@@ -79,16 +79,44 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.body.appendChild(overlay);
 
-    function getConfigurationForm() {
-    const form = document.getElementById('configuracion-form');
-    if (!form) {
-        console.error('No se encontró el formulario de configuraciones');
-        return null;
+    // Deshabilitar botón de fuente de alimentación si no se seleccionan CPU y GPU
+    const fuenteBtn = document.querySelector('#fuente_de_alimentacion-image')
+        ?.closest('.card')
+        .querySelector('.btn-primary');
+
+    if (fuenteBtn) {
+        fuenteBtn.disabled = true;
+        fuenteBtn.title = 'Debes seleccionar un procesador y una tarjeta gráfica primero';
+
+        function updateFuenteButtonState() {
+            const cpuSelected = !!getCpuId();
+            const gpuSelected = !!getGpuId();
+
+            if (cpuSelected && gpuSelected) {
+                fuenteBtn.disabled = false;
+                fuenteBtn.title = 'Seleccionar fuente de alimentación';
+            } else {
+                fuenteBtn.disabled = true;
+                fuenteBtn.title = 'Debes seleccionar un procesador y una tarjeta gráfica primero';
+            }
+        }
+
+        updateFuenteButtonState();
+
+        document.addEventListener('change', updateFuenteButtonState);
+        document.addEventListener('click', updateFuenteButtonState);
     }
-    
-    console.log('Formulario de configuraciones encontrado:', form);
-    return form;
-}
+
+    function getConfigurationForm() {
+        const form = document.getElementById('configuracion-form');
+        if (!form) {
+            console.error('No se encontró el formulario de configuraciones');
+            return null;
+        }
+
+        console.log('Formulario de configuraciones encontrado:', form);
+        return form;
+    }
 
     function createOrUpdateHiddenInput(componentSlug, componentId) {
         const form = getConfigurationForm();
@@ -365,11 +393,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function fetchComponents(componentType) {
         let endpoint = '';
         let params = new URLSearchParams();
+        const mbId = getMotherboardId();
+        const cpu = getCpuId();
+        const gpu = getGpuId();
 
         switch(componentType) {
             case 'Procesador':
                 endpoint = '/api/v1/components/cpus';
-                const mbId = getMotherboardId();
                 if (mbId) params.append('motherboard_id', mbId);
                 break;
             case 'Tarjeta gráfica':
@@ -377,11 +407,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
             case 'Placa Base':
                 endpoint = '/api/v1/components/motherboards';
-                const cpu = getCpuId();
                 if (cpu) params.append('cpu_id', cpu);
                 break;
             case 'Fuente de Alimentación':
-                endpoint = '/api/v1/components/power-supplies';
+                endpoint = '/api/v1/components/power-supplies';           
+                if (cpu) params.append('cpu_id', cpu);
+                if (gpu) params.append('gpu_id', gpu);
                 break;
             case 'Memoria RAM':
                 endpoint = '/api/v1/components/rams';
@@ -420,6 +451,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getMotherboardId() {
         const input = document.querySelector('input[name="placa_base"]');
+        return input ? input.value : null;
+    }
+
+    function getGpuId() {
+        const input = document.querySelector('input[name="tarjeta_grafica"]');
         return input ? input.value : null;
     }
     
