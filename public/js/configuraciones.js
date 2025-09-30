@@ -393,14 +393,14 @@ document.addEventListener('DOMContentLoaded', function () {
     function fetchComponents(componentType) {
         let endpoint = '';
         let params = new URLSearchParams();
-        const mbId = getMotherboardId();
+        const mb = getMotherboardId();
         const cpu = getCpuId();
         const gpu = getGpuId();
 
         switch(componentType) {
             case 'Procesador':
                 endpoint = '/api/v1/components/cpus';
-                if (mbId) params.append('motherboard_id', mbId);
+                if (mb) params.append('motherboard_id', mb);
                 break;
             case 'Tarjeta gráfica':
                 endpoint = '/api/v1/components/graphic-cards';
@@ -444,20 +444,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function getCpuId() {
-        const input = document.querySelector('input[name="procesador"]');
-        return input ? input.value : null;
-    }
-
-    function getMotherboardId() {
-        const input = document.querySelector('input[name="placa_base"]');
-        return input ? input.value : null;
-    }
-
-    function getGpuId() {
-        const input = document.querySelector('input[name="tarjeta_grafica"]');
-        return input ? input.value : null;
-    }
+    const getCpuId = () => document.querySelector('input[name="procesador"]')?.value || null;
+    const getMotherboardId = () => document.querySelector('input[name="placa_base"]')?.value || null;
+    const getGpuId = () => document.querySelector('input[name="tarjeta_grafica"]')?.value || null;
     
     // Función para crear una tarjeta de componente
     function createComponentCard(component, componentType) {
