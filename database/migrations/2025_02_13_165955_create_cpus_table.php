@@ -28,6 +28,9 @@ return new class extends Migration
             $table->integer("n_threads");
             $table->string("socket");
             $table->integer("tdp");
+
+            // Clave única para nombre y vendedor
+            $table->unique(["name", "vendor"], "unique_cpu_name_vendor");
         });
     }
 

@@ -26,6 +26,9 @@ return new class extends Migration
             $table->string("mem_type");
             $table->integer("tdp");
             $table->timestamps();
+
+            // Clave única para nombre y vendedor
+            $table->unique(["name", "vendor"], "unique_graphic_card_name_vendor");
         });
     }
 
