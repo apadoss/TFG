@@ -367,7 +367,7 @@ class ComponentesController extends Controller
             $gpu = TarjetaGrafica::find($request->gpu_id);
 
             if ($cpu && $gpu) {
-                $requiredWattage = (($gpu->tdp + $cpu->tdp) + 75) * 1.5;
+                $requiredWattage = (($gpu->tdp + $cpu->tdp) + 75) * 1.3;
                 $query->where('power', '>=', $requiredWattage);
             }
         }
