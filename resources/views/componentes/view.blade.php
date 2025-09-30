@@ -13,7 +13,13 @@
     <!-- Product Header -->
     <div class="row mb-4">
         <div class="col-md-8">
-            <h1 class="fw-bold mb-2">{{ $product->name }}</h1>
+            <h1 class="fw-bold mb-2 d-inline-flex align-items-center">
+                {{ $product->name }}
+                <i class="bi bi-info-circle text-primary ms-2 nomenclature-info"
+                   data-brand="{{ strtolower($product->brand) }}"
+                   data-model="{{ $product->name }}">
+                </i>
+            </h1>
             <div class="d-flex align-items-center mb-3">
                 <span class="badge bg-primary me-2">{{ ucfirst($type) }}</span>
                 <span class="badge bg-secondary me-2">{{ $product->brand }}</span>
@@ -211,4 +217,7 @@
         </div>
     </div>
 </div>
+
+<script type="module" src={{asset('js/nomenclature.js')}}></script>
 @endsection
+
