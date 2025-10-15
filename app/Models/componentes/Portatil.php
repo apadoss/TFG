@@ -3,6 +3,7 @@
 namespace App\Models\componentes;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PriceHistory;
 
 class Portatil extends Model
 {
@@ -23,4 +24,9 @@ class Portatil extends Model
     "battery_life",
     "weight"
     ];
+
+    public function priceHistory()
+    {
+        return $this->morphMany(PriceHistory::class, 'component');
+    }
 }

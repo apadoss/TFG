@@ -3,6 +3,7 @@
 namespace App\Models\componentes;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PriceHistory;
 
 class Procesador extends Model
 {
@@ -19,4 +20,9 @@ class Procesador extends Model
     "n_threads",
     "socket",
     "tdp"];
+
+    public function priceHistory()
+    {
+        return $this->morphMany(PriceHistory::class, 'component');
+    }
 }

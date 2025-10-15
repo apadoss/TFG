@@ -3,6 +3,7 @@
 namespace App\Models\componentes;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PriceHistory;
 
 class Almacenamiento extends Model
 {
@@ -17,4 +18,9 @@ class Almacenamiento extends Model
     "image",
     "type",
     "storage"];
+
+    public function priceHistory()
+    {
+        return $this->morphMany(PriceHistory::class, 'component');
+    }
 }

@@ -25,6 +25,9 @@ return new class extends Migration
             $table->string("chipset");
             $table->string("size_format");
             $table->timestamps();
+
+            // Clave única para nombre y vendedor
+            $table->unique(["name", "vendor"], "unique_motherboard_name_vendor");
         });
     }
 

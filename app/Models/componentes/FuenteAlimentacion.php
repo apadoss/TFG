@@ -3,6 +3,7 @@
 namespace App\Models\componentes;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PriceHistory;
 
 class FuenteAlimentacion extends Model
 {
@@ -17,4 +18,9 @@ class FuenteAlimentacion extends Model
     "image",
     "certification",
     "power"];
+
+    public function priceHistory()
+    {
+        return $this->morphMany(PriceHistory::class, 'component');
+    }
 }

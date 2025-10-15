@@ -24,6 +24,9 @@ return new class extends Migration
             $table->string("certification");
             $table->integer("power");
             $table->timestamps();
+
+            // Clave única para nombre y vendedor
+            $table->unique(["name", "vendor"], "unique_power_supply_name_vendor");
         });
     }
 

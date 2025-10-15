@@ -3,6 +3,7 @@
 namespace App\Models\componentes;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PriceHistory;
 
 class MemoriaRam extends Model
 {
@@ -21,4 +22,9 @@ class MemoriaRam extends Model
     "frequency",
     "latency"
     ];
+
+    public function priceHistory()
+    {
+        return $this->morphMany(PriceHistory::class, 'component');
+    }
 }

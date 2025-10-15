@@ -3,6 +3,7 @@
 namespace App\Models\componentes;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PriceHistory;
 
 class TarjetaGrafica extends Model
 {
@@ -19,4 +20,9 @@ class TarjetaGrafica extends Model
     "vram",
     "mem_type",
     "tdp"];
+
+    public function priceHistory()
+    {
+        return $this->morphMany(PriceHistory::class, 'component');
+    }
 }
