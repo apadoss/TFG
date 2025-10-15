@@ -32,6 +32,26 @@
             <a href="{{ route('componentes.compare', ['type' => $type, 'product1' => $product->id]) }}" class="btn btn-outline-primary">
                 <i class="bi bi-arrow-left-right me-2"></i>Comparar
             </a>
+            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#priceHistoryModal"
+                    data-component-type={{ get_class($product) }}
+                    data-component-id={{ $product->id }}>
+                <i class="bi bi-bar-chart-line"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Histórico de Precios -->
+    <div class="modal fade" id="priceHistoryModal" tabindex="-1" aria-labelledby="priceHistoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="priceHistoryModalLabel">Histórico de Precios - {{ $product->name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -219,5 +239,6 @@
 </div>
 
 <script type="module" src={{asset('js/nomenclature.js')}}></script>
+<script type="module" src={{asset('js/graph.js')}}></script>
 @endsection
 
