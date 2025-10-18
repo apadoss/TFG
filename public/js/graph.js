@@ -211,7 +211,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const allPrices = datasets.flatMap(d => d.data.filter(p => p !== null));
             const minPrice = Math.min(...allPrices);
             const maxPrice = Math.max(...allPrices);
-            const padding = (maxPrice - minPrice) * 0.1;
+            
+            let padding;
+            if (minPrice === maxPrice) {
+                padding = maxPrice * 0.1;
+            } else {
+                padding = (maxPrice - minPrice) * 0.1;
+            }
             
             window.priceChartInstance = new Chart(ctx, {
                 type: 'line',
