@@ -40,6 +40,9 @@
                     <td>
                         <div class="d-flex flex-column gap-2">
                             <button class="btn btn-primary">Editar</button>
+                            <a href="{{ route('configuraciones.compare', $configuracion->id) }}" class="btn btn-warning">
+                                <i class="bi bi-arrows-angle-expand"></i> Comparar
+                        </a>
                             <button class="btn btn-danger">Eliminar</button>
                         </div>
                     </td>

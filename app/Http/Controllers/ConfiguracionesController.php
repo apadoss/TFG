@@ -36,4 +36,31 @@ class ConfiguracionesController extends Controller
 
         return redirect(route('configuraciones.index'));
     }
+
+    public function compare($id, $id2 = null){
+        $config1 = Configuracion::with([
+            'cpu',
+            'graphic_card',
+            'motherboard',
+            'ram',
+            'storage',
+            'power_supply'
+        ])->findOrFail($id);
+        
+        $config2 = null;
+        if ($id2) {
+            $config2 = Configuracion::with([
+                'cpu',
+                'graphic_card',
+                'motherboard',
+                'ram',
+                'storage',
+                'power_supply'
+            ])->findOrFail($id2);
+        }
+        
+        $allConfigs = Configuracion::where('id', '!=', $id)->get();
+        
+        return view('configuraciones.compare', compact('config1', 'config2', 'allConfigs'));
+    } 
 }

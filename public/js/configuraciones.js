@@ -83,6 +83,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const fuenteBtn = document.querySelector('#fuente_de_alimentacion-image')
         ?.closest('.card')
         .querySelector('.btn-primary');
+    
+    const getCpuId = () => document.querySelector('input[name="procesador"]')?.value || null;
+    const getMotherboardId = () => document.querySelector('input[name="placa_base"]')?.value || null;
+    const getGpuId = () => document.querySelector('input[name="tarjeta_grafica"]')?.value || null;
 
     if (fuenteBtn) {
         fuenteBtn.disabled = true;
@@ -443,10 +447,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return [];
         });
     }
-
-    const getCpuId = () => document.querySelector('input[name="procesador"]')?.value || null;
-    const getMotherboardId = () => document.querySelector('input[name="placa_base"]')?.value || null;
-    const getGpuId = () => document.querySelector('input[name="tarjeta_grafica"]')?.value || null;
     
     // Función para crear una tarjeta de componente
     function createComponentCard(component, componentType) {
