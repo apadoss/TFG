@@ -14,6 +14,32 @@ class Configuracion extends Model
 {
     protected $table = 'configurations';
 
+    public function getTotalPriceAttribute()
+    {
+        $total = 0;
+        
+        if ($this->cpu) {
+            $total += $this->cpu->price ?? 0;
+        }
+        if ($this->graphic_card) {
+            $total += $this->graphic_card->price ?? 0;
+        }
+        if ($this->motherboard) {
+            $total += $this->motherboard->price ?? 0;
+        }
+        if ($this->ram) {
+            $total += $this->ram->price ?? 0;
+        }
+        if ($this->storage) {
+            $total += $this->storage->price ?? 0;
+        }
+        if ($this->power_supply) {
+            $total += $this->power_supply->price ?? 0;
+        }
+        
+        return $total;
+    }
+
     public function cpu() {
         return $this->belongsTo(Procesador::class);
     }
