@@ -28,8 +28,19 @@ return new class extends Migration
                 AFTER UPDATE ON cpus
                 FOR EACH ROW
                 BEGIN
+                    -- Insertar en price_history
                     INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
                     VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Procesador", NEW.vendor, NEW.price, NOW(), NOW());
+
+                    -- Si el precio bajó, marcar para notificación
+                    IF NEW.price < OLD.price THEN
+                        INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                        VALUES ("App\\\\Models\\\\componentes\\\\Procesador", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                        ON DUPLICATE KEY UPDATE
+                            old_price = OLD.price,
+                            new_price = NEW.price,
+                            created_at = NOW();
+                    END IF;
                 END
         ');
 
@@ -51,6 +62,15 @@ return new class extends Migration
                 BEGIN
                     INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
                     VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\TarjetaGrafica", NEW.vendor, NEW.price, NOW(), NOW());
+                
+                    IF NEW.price < OLD.price THEN
+                        INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                        VALUES ("App\\\\Models\\\\componentes\\\\TarjetaGrafica", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                        ON DUPLICATE KEY UPDATE
+                            old_price = OLD.price,
+                            new_price = NEW.price,
+                            created_at = NOW();
+                    END IF;
                 END
         ');
 
@@ -72,6 +92,15 @@ return new class extends Migration
                 BEGIN
                     INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
                     VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\PlacasBase", NEW.vendor, NEW.price, NOW(), NOW());
+
+                    IF NEW.price < OLD.price THEN
+                        INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                        VALUES ("App\\\\Models\\\\componentes\\\\PlacasBase", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                        ON DUPLICATE KEY UPDATE
+                            old_price = OLD.price,
+                            new_price = NEW.price,
+                            created_at = NOW();
+                    END IF;
                 END
         ');
 
@@ -93,6 +122,15 @@ return new class extends Migration
                 BEGIN
                     INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
                     VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\FuenteAlimentacion", NEW.vendor, NEW.price, NOW(), NOW());
+
+                    IF NEW.price < OLD.price THEN
+                        INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                        VALUES ("App\\\\Models\\\\componentes\\\\FuenteAlimentacion", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                        ON DUPLICATE KEY UPDATE
+                            old_price = OLD.price,
+                            new_price = NEW.price,
+                            created_at = NOW();
+                    END IF;
                 END
         ');
     }
