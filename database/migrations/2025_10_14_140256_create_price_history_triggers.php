@@ -29,8 +29,8 @@ return new class extends Migration
             FOR EACH ROW
             BEGIN
                 -- Insertar en price_history siempre
-                INSERT INTO price_history (component_type, component_id, vendor, price, recorded_at, created_at, updated_at)
-                VALUES ("App\\\\Models\\\\componentes\\\\Procesador", NEW.id, NEW.vendor, NEW.price, NOW(), NOW(), NOW());
+                INSERT INTO price_history (component_type, component_id, vendor, price, created_at, updated_at)
+                VALUES ("App\\\\Models\\\\componentes\\\\Procesador", NEW.id, NEW.vendor, NEW.price, NOW(), NOW());
                 
                 -- Si el precio bajó, insertar en pending_notifications
                 IF NEW.price < OLD.price THEN
