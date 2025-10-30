@@ -32,11 +32,116 @@
             <a href="{{ route('componentes.compare', ['type' => $type, 'product1' => $product->id]) }}" class="btn btn-outline-primary">
                 <i class="bi bi-arrow-left-right me-2"></i>Comparar
             </a>
-            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#priceHistoryModal"
-                    data-component-type={{ get_class($product) }}
-                    data-component-id={{ $product->id }}>
+            <button type="button" class="btn btn-outline-secondary" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#priceHistoryModal"
+                    data-component-type="{{ get_class($product) }}"
+                    data-component-id="{{ $product->id }}">
                 <i class="bi bi-bar-chart-line"></i>
             </button>
+            <button 
+                type="button" 
+                id="notifyBtn" 
+                class="btn btn-outline-warning"
+                data-bs-toggle="modal"
+                data-bs-target="#notificationModal"
+                data-component-type="{{ get_class($product) }}"
+                data-component-id="{{ $product->id }}">
+                <i class="bi bi-bell"></i> <span id="notifyBtnText">Notifícame</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Configuración de Notificación -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">
+                        <i class="fas fa-bell"></i> Configurar Notificación de Precio
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="notificationForm">
+                        <input type="hidden" id="componentType" value="{{ get_class($product) }}">
+                        <input type="hidden" id="componentId" value="{{ $product->id }}">
+
+                        <!-- Precio actual -->
+                        <div class="alert alert-info">
+                            <strong>Precio actual:</strong> {{ number_format($product->price, 2) }}€
+                        </div>
+
+                        <!-- Tipo de notificación -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">¿Cuándo quieres que te notifiquemos?</label>
+
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input" 
+                                    type="radio" 
+                                    name="notificationType" 
+                                    id="notifyAnyDrop" 
+                                    value="any_drop"
+                                    checked>
+                                <label class="form-check-label" for="notifyAnyDrop">
+                                    <strong>Cualquier bajada de precio</strong>
+                                </label>
+                            </div>
+
+                            <div class="form-check mt-2">
+                                <input 
+                                    class="form-check-input" 
+                                    type="radio" 
+                                    name="notificationType" 
+                                    id="notifyTargetPrice" 
+                                    value="target_price">
+                                <label class="form-check-label" for="notifyTargetPrice">
+                                    <strong>Solo cuando llegue a un precio específico</strong>
+                                    <small class="text-muted d-block">Te notificaremos solo cuando alcance tu precio objetivo</small>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Precio objetivo (se muestra solo si selecciona target_price) -->
+                        <div class="mb-3" id="targetPriceGroup" style="display: none;">
+                            <label for="targetPrice" class="form-label fw-bold">
+                                <i class="fas fa-bullseye"></i> Precio objetivo
+                            </label>
+                            <div class="input-group">
+                                <input 
+                                    type="number" 
+                                    class="form-control" 
+                                    id="targetPrice" 
+                                    name="target_price"
+                                    step="0.01"
+                                    min="0"
+                                    max="{{ $product->price }}"
+                                    placeholder="Ej: {{ number_format($product->price * 0.8, 2) }}">
+                                <span class="input-group-text">€</span>
+                            </div>
+                            <small class="form-text text-muted">
+                                Introduce el precio máximo al que quieres comprar este componente
+                            </small>
+                            <div id="targetPriceError" class="text-danger small mt-1" style="display: none;"></div>
+                        </div>
+
+                        <!-- Ejemplo visual -->
+                        <div class="alert alert-light border">
+                            <small>
+                                <strong>Ejemplo:</strong>
+                                <span id="notificationExample">Te enviaremos un email cada vez que el precio baje.</span>
+                            </small>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="saveNotification">
+                        <i class="fas fa-check"></i> Activar Notificación
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -229,6 +334,56 @@
                                     <span class="fw-bold">{{ $product->mem_type }}</span>
                                 </li>
                             </ul>
+                            @elseif($type == 'placas-base')
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Marca</span>
+                                    <span class="fw-bold">{{ $product->brand }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Socket</span>
+                                    <span class="fw-bold">{{ $product->socket }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Chipset</span>
+                                    <span class="fw-bold">{{ $product->chipset }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Formato</span>
+                                    <span class="fw-bold">{{ $product->form_factor }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Slots RAM</span>
+                                    <span class="fw-bold">{{ $product->ram_slots }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Tipo de RAM</span>
+                                    <span class="fw-bold">{{ $product->ram_type }}</span>
+                                </li>
+                            </ul>
+                            @elseif($type == 'fuentes-alimentacion')
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Marca</span>
+                                    <span class="fw-bold">{{ $product->brand }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Potencia</span>
+                                    <span class="fw-bold">{{ $product->power }} W</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <span class="text-muted">Certificación</span>
+                                    <span class="fw-bold">{{ $product->certification }}</span>
+                                </li>
+                            </ul>
                             @endif
                         </div>
                     </div>
@@ -240,5 +395,6 @@
 
 <script type="module" src={{asset('js/nomenclature.js')}}></script>
 <script type="module" src={{asset('js/graph.js')}}></script>
+<script type="module" src={{asset('js/notify.js')}}></script>
 @endsection
 

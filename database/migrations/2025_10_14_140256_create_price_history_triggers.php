@@ -25,12 +25,27 @@ return new class extends Migration
 
         DB::unprepared('
             CREATE TRIGGER after_cpu_update
-                AFTER UPDATE ON cpus
-                FOR EACH ROW
-                BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Procesador", NEW.vendor, NEW.price, NOW(), NOW());
-                END
+            AFTER UPDATE ON cpus
+            FOR EACH ROW
+            BEGIN
+                -- Insertar en price_history siempre
+                INSERT INTO price_history (component_type, component_id, vendor, price, recorded_at, created_at, updated_at)
+                VALUES ("App\\\\Models\\\\componentes\\\\Procesador", NEW.id, NEW.vendor, NEW.price, NOW(), NOW(), NOW());
+                
+                -- Si el precio bajó, insertar en pending_notifications
+                IF NEW.price < OLD.price THEN
+                    -- Eliminar notificación pendiente anterior del mismo componente si existe
+                    DELETE FROM pending_notifications 
+                    WHERE component_type = "App\\\\Models\\\\componentes\\\\Procesador"
+                      AND component_id = NEW.id 
+                      AND vendor = NEW.vendor 
+                      AND processed = 0;
+                    
+                    -- Insertar nueva notificación pendiente
+                    INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                    VALUES ("App\\\\Models\\\\componentes\\\\Procesador", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                END IF;
+            END
         ');
 
         // ==================== TARJETAS GRAFICAS ====================
@@ -51,6 +66,17 @@ return new class extends Migration
                 BEGIN
                     INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
                     VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\TarjetaGrafica", NEW.vendor, NEW.price, NOW(), NOW());
+                
+                    IF NEW.price < OLD.price THEN
+                        DELETE FROM pending_notifications 
+                        WHERE component_type = "App\\\\Models\\\\componentes\\\\TarjetaGrafica"
+                          AND component_id = NEW.id 
+                          AND vendor = NEW.vendor 
+                          AND processed = 0;
+
+                        INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                        VALUES ("App\\\\Models\\\\componentes\\\\TarjetaGrafica", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                    END IF;
                 END
         ');
 
@@ -72,6 +98,17 @@ return new class extends Migration
                 BEGIN
                     INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
                     VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\PlacasBase", NEW.vendor, NEW.price, NOW(), NOW());
+
+                    IF NEW.price < OLD.price THEN
+                        DELETE FROM pending_notifications 
+                        WHERE component_type = "App\\\\Models\\\\componentes\\\\PlacasBase"
+                          AND component_id = NEW.id 
+                          AND vendor = NEW.vendor 
+                          AND processed = 0;
+
+                        INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                        VALUES ("App\\\\Models\\\\componentes\\\\PlacasBase", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                    END IF;
                 END
         ');
 
@@ -93,6 +130,17 @@ return new class extends Migration
                 BEGIN
                     INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
                     VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\FuenteAlimentacion", NEW.vendor, NEW.price, NOW(), NOW());
+
+                    IF NEW.price < OLD.price THEN
+                        DELETE FROM pending_notifications 
+                        WHERE component_type = "App\\\\Models\\\\componentes\\\\FuenteAlimentacion"
+                          AND component_id = NEW.id 
+                          AND vendor = NEW.vendor 
+                          AND processed = 0;
+
+                        INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                        VALUES ("App\\\\Models\\\\componentes\\\\PlacasBase", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                    END IF;
                 END
         ');
     }

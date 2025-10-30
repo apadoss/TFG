@@ -38,7 +38,7 @@
                             <li><hr class="dropdown-divider"></li>
                             {{-- <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i>Mi perfil</a></li> --}}
                             <li><a class="dropdown-item" href="{{ route('configuraciones.index') }}"><i class="bi bi-pc-display me-2"></i>Mis configuraciones</a></li>
-                            {{-- <li><a class="dropdown-item" href="{{ route('price-alerts') }}"><i class="bi bi-bell me-2"></i>Alertas de precios</a></li> --}}
+                            <li><a class="dropdown-item" href="{{ route('notifications.index') }}"><i class="bi bi-bell me-2"></i>Notificaciones de precios</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <a class="dropdown-item text-danger" href="{{ route('logout') }}"
