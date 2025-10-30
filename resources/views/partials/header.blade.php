@@ -1,16 +1,13 @@
-
 <header class="bg-white shadow-sm py-3 px-4 sticky-sm-top">
     <div class="container-fluid">
         <div class="d-flex justify-content-between align-items-center">
-            <!-- Sidebar -->
-            <div>
-                <button id="sidebarToggle" class="btn">
+            <!-- Sidebar + Logo -->
+            <div class="d-flex align-items-center">
+                <button id="sidebarToggle" class="btn me-2">
                     <i class="bi bi-list" style="font-size: 1.5rem;"></i>
                 </button>
-            </div>
 
-            <div class="d-none d-md-block">
-                <a href="{{ route('home') }}" class="text-decoration-none">
+                <a href="{{ route('home') }}" class="text-decoration-none d-none d-md-block">
                     <img src="{{ asset('images/logos/logo.png') }}" alt="PCompare Logo" class="img-fluid" style="max-height: 40px;">
                 </a>
             </div>
