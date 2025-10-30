@@ -45,8 +45,8 @@ class PriceNotification extends Model
         }
 
         // Si hay precio objetivo, verificar si llegó o bajó del objetivo
-        if ($this->target_price && $newPrice <= $this->target_price) {
-            return true;
+        if ($this->target_price) {
+            return $newPrice <= $this->target_price;
         }
 
         // Si notify_any_drop está activo, notificar cualquier bajada
@@ -54,7 +54,7 @@ class PriceNotification extends Model
             return true;
         }
 
-        return false;
+        return $this->notify_any_drop;;
     } 
 
 }
