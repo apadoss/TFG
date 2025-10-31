@@ -77,7 +77,9 @@ class ComponentesController extends Controller
             case 'almacenamiento':
                 $query = Almacenamiento::query();
 
-                if ($request->type) {
+                $validTypes = ['SSD', 'HDD'];
+
+                if (in_array($request->type, $validTypes)) {
                     $query->where('type', $request->type);
                 }
                 if ($request->capacity_min) {
