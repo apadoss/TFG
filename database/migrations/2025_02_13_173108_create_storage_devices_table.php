@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string("image");
 
             $table->string("type");
-            $table->integer("storage");
+            $table->decimal("storage", 10, 2);
             $table->timestamps();
         });
     }
