@@ -93,7 +93,9 @@ class ComponentesController extends Controller
             case 'ram':
                 $query = MemoriaRam::query();
 
-                if ($request->type) {
+                $validTypes = ['DDR3', 'DDR4', 'DDR5'];
+
+                if (in_array($request->type, $validTypes)) {
                     $query->where('type', $request->type);
                 }
                 if ($request->speed_min) {
