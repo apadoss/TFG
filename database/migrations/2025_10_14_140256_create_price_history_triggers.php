@@ -80,6 +80,39 @@ return new class extends Migration
                 END
         ');
 
+        // ==================== ALMACENAMIENTO ====================
+
+        DB::unprepared('
+            CREATE TRIGGER after_storage_device_insert
+                AFTER INSERT ON storage_devices
+                FOR EACH ROW
+                BEGIN
+                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Almacenamiento", NEW.vendor, NEW.price, NOW(), NOW());
+                END
+        ');
+
+        DB::unprepared('
+            CREATE TRIGGER after_storage_device_update
+                AFTER UPDATE ON storage_devices
+                FOR EACH ROW
+                BEGIN
+                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Almacenamiento", NEW.vendor, NEW.price, NOW(), NOW());
+
+                    IF NEW.price < OLD.price THEN
+                        DELETE FROM pending_notifications 
+                        WHERE component_type = "App\\\\Models\\\\componentes\\\\Almacenamiento"
+                          AND component_id = NEW.id 
+                          AND vendor = NEW.vendor 
+                          AND processed = 0;
+                        
+                        INSERT INTO pending_notifications (component_type, component_id, vendor, old_price, new_price, created_at)
+                        VALUES ("App\\\\Models\\\\componentes\\\\Almacenamiento", NEW.id, NEW.vendor, OLD.price, NEW.price, NOW());
+                    END IF;
+                END
+        ');
+
         // ==================== PLACAS BASE ====================
         DB::unprepared('
             CREATE TRIGGER after_motherboard_insert
