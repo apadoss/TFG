@@ -20,3 +20,7 @@ yarn-error.log
 /.idea
 /.vscode
 /.zed
+*/*_results.json
+*/scraper.log
+*_results.json
+scraper.log

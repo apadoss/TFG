@@ -9,5 +9,9 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('app:process-price-drops')
+    ->dailyAt('14:00')
+    ->withoutOverlapping();
+
+Schedule::command('app:execute-web-scraping')
     ->dailyAt('02:00')
     ->withoutOverlapping();
