@@ -16,13 +16,25 @@ class PriceHistoryController extends Controller
             return response()->json(['error' => 'Faltan parámetros'], 400);
         }
 
+        $component = app($componentType)->find($componentId);
+
+        if (!$component){
+            return response()->json(['error' => 'Componente no encontrado'], 404);
+        } 
+
         $startDate = Carbon::now()->subMonths(9)->startOfMonth();
 
+        // $priceHistory = PriceHistory::where('component_type', $componentType)
+                        // ->where('component_id', $componentId)
+                        // ->where('created_at', '>=', $startDate)
+                        // ->orderBy('created_at')
+                        // ->get();
+
         $priceHistory = PriceHistory::where('component_type', $componentType)
-                        ->where('component_id', $componentId)
-                        ->where('created_at', '>=', $startDate)
-                        ->orderBy('created_at')
-                        ->get();
+            ->where('component_name', $component->name)
+            ->where('created_at', '>=', $startDate)
+            ->orderBy('created_at')
+            ->get();
         
         $monthlyData = [];
         $months = [

@@ -18,8 +18,8 @@ return new class extends Migration
                 AFTER INSERT ON cpus
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Procesador", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Procesador", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
                 END
         ');
 
@@ -29,8 +29,8 @@ return new class extends Migration
             FOR EACH ROW
             BEGIN
                 -- Insertar en price_history siempre
-                INSERT INTO price_history (component_type, component_id, vendor, price, created_at, updated_at)
-                VALUES ("App\\\\Models\\\\componentes\\\\Procesador", NEW.id, NEW.vendor, NEW.price, NOW(), NOW());
+                INSERT INTO price_history (component_type, component_id, component_name, vendor, price, created_at, updated_at)
+                VALUES ("App\\\\Models\\\\componentes\\\\Procesador", NEW.id, NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
                 
                 -- Si el precio bajó, insertar en pending_notifications
                 IF NEW.price < OLD.price THEN
@@ -54,8 +54,8 @@ return new class extends Migration
                 AFTER INSERT ON graphic_cards
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\TarjetaGrafica", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\TarjetaGrafica", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
                 END
         ');
 
@@ -64,8 +64,8 @@ return new class extends Migration
                 AFTER UPDATE ON graphic_cards
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\TarjetaGrafica", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\TarjetaGrafica", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
                 
                     IF NEW.price < OLD.price THEN
                         DELETE FROM pending_notifications 
@@ -87,8 +87,8 @@ return new class extends Migration
                 AFTER INSERT ON storage_devices
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Almacenamiento", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Almacenamiento", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
                 END
         ');
 
@@ -97,8 +97,8 @@ return new class extends Migration
                 AFTER UPDATE ON storage_devices
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Almacenamiento", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\Almacenamiento", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
 
                     IF NEW.price < OLD.price THEN
                         DELETE FROM pending_notifications 
@@ -119,8 +119,8 @@ return new class extends Migration
                 AFTER INSERT ON motherboards
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\PlacasBase", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\PlacasBase", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
                 END
         ');
 
@@ -129,8 +129,8 @@ return new class extends Migration
                 AFTER UPDATE ON motherboards
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\PlacasBase", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\PlacasBase", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
 
                     IF NEW.price < OLD.price THEN
                         DELETE FROM pending_notifications 
@@ -151,8 +151,8 @@ return new class extends Migration
                 AFTER INSERT ON power_supplies
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\FuenteAlimentacion", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\FuenteAlimentacion", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
                 END
         ');
 
@@ -161,8 +161,8 @@ return new class extends Migration
                 AFTER UPDATE ON power_supplies
                 FOR EACH ROW
                 BEGIN
-                    INSERT INTO price_history (component_id, component_type, vendor, price, created_at, updated_at)
-                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\FuenteAlimentacion", NEW.vendor, NEW.price, NOW(), NOW());
+                    INSERT INTO price_history (component_id, component_type, component_name, vendor, price, created_at, updated_at)
+                    VALUES (NEW.id, "App\\\\Models\\\\componentes\\\\FuenteAlimentacion", NEW.name, NEW.vendor, NEW.price, NOW(), NOW());
 
                     IF NEW.price < OLD.price THEN
                         DELETE FROM pending_notifications 
