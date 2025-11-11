@@ -37,6 +37,15 @@ class ConfiguracionesController extends Controller
         return redirect(route('configuraciones.index'));
     }
 
+    public function destroy($id) {
+        $configuracion = Configuracion::findOrFail($id);
+
+        $configuracion->delete();
+
+        return redirect()->route('configuraciones.index')
+                         ->with('success', 'Configuración eliminada correctamente.');
+    }
+
     public function compare($id, $id2 = null){
         $config1 = Configuracion::with([
             'cpu',
