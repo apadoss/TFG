@@ -122,64 +122,116 @@
     </div>
 </div>
 
+{{-- Modal de confirmación de eliminación --}}
+<div class="modal fade" id="deleteNotificationModal" tabindex="-1" aria-labelledby="deleteNotificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="deleteNotificationModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+                    Confirmar eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">¿Estás seguro de que deseas desactivar esta notificación?</p>
+                <p class="text-muted small mb-0">Podrás activarla nuevamente más tarde desde el componente.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteNotification">
+                    <i class="bi bi-trash me-1"></i> Desactivar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    // ========== DESACTIVAR NOTIFICACIÓN (con delegación) ==========
+    // ========== DESACTIVAR NOTIFICACIÓN ==========
+    let notificationToDelete = null;
+    const deleteNotificationModal = new bootstrap.Modal(document.getElementById('deleteNotificationModal'));
+    
     document.addEventListener('click', function(e) {
         if (e.target.closest('.deactivate-notification')) {
             e.preventDefault();
             
             const button = e.target.closest('.deactivate-notification');
             
-            if (!confirm('¿Desactivar esta notificación?')) {
-                return;
-            }
-
-            const componentType = button.dataset.componentType;
-            const componentId = button.dataset.componentId;
-            const card = button.closest('.notification-card');
-
-            fetch('/notifications/deactivate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify({
-                    component_type: componentType,
-                    component_id: componentId
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Animar la eliminación
-                    card.style.transition = 'opacity 0.3s, transform 0.3s';
-                    card.style.opacity = '0';
-                    card.style.transform = 'scale(0.9)';
-                    
-                    setTimeout(() => {
-                        const cardCol = card.closest('.col-12');
-                        if (cardCol) {
-                            cardCol.remove();
-                        }
-                        
-                        // Si no quedan notificaciones, recargar la página
-                        if (document.querySelectorAll('.notification-card').length === 0) {
-                            location.reload();
-                        }
-                    }, 300);
-                } else {
-                    alert('Error al desactivar la notificación');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error al desactivar la notificación');
-            });
+            // Guardar datos de la notificación a eliminar
+            notificationToDelete = {
+                componentType: button.dataset.componentType,
+                componentId: button.dataset.componentId,
+                card: button.closest('.notification-card')
+            };
+            
+            // Mostrar modal
+            deleteNotificationModal.show();
         }
+    });
+    
+    // Cuando se confirma la eliminación en el modal
+    document.getElementById('confirmDeleteNotification').addEventListener('click', function() {
+        if (!notificationToDelete) return;
+        
+        const { componentType, componentId, card } = notificationToDelete;
+        
+        // Deshabilitar el botón mientras se procesa
+        this.disabled = true;
+        const originalHTML = this.innerHTML;
+        this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Eliminando...';
+    
+        fetch('/notifications/deactivate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                component_type: componentType,
+                component_id: componentId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Cerrar modal
+                deleteNotificationModal.hide();
+                
+                // Animar la eliminación
+                card.style.transition = 'opacity 0.3s, transform 0.3s';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                
+                setTimeout(() => {
+                    const cardCol = card.closest('.col-12');
+                    if (cardCol) {
+                        cardCol.remove();
+                    }
+                    
+                    // Si no quedan notificaciones, recargar la página
+                    if (document.querySelectorAll('.notification-card').length === 0) {
+                        location.reload();
+                    }
+                }, 300);
+                
+                // Resetear estado
+                notificationToDelete = null;
+            } else {
+                alert('Error al desactivar la notificación');
+                this.disabled = false;
+                this.innerHTML = originalHTML;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al desactivar la notificación');
+            this.disabled = false;
+            this.innerHTML = originalHTML;
+        });
     });
 
     // ========== EDITAR NOTIFICACIÓN (con delegación) ==========
