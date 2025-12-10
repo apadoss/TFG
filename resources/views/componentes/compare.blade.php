@@ -21,22 +21,17 @@
                 <div class="card-header bg-secondary text-white">
                     <h5 class="mb-0">Componente 2</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="componente-2-card">
                     @if($product2)
-                        <h4>{{ $product2->name }}</h4>
-                        <img src="{{ $product2->image }}" class="img-fluid mb-3" style="max-height: 200px;" alt="{{ $product2->name }}">
+                        <h4 id="product2-name">{{ $product2->name }}</h4>
+                        <img id="product2-image" src="{{ $product2->image }}" class="img-fluid mb-3" style="max-height: 200px;" alt="{{ $product2->name }}">
                     @else
-                        <form action="#" method="GET" id="compareForm">
-                            <div class="form-group">
-                                <label for="product2">Selecciona un componente para comparar:</label>
-                                <select class="form-control" id="product2" name="product2" onchange="selectProduct2(this.value)">
-                                    <option value="">-- Seleccionar componente --</option>
-                                    @foreach($allProducts as $product)
-                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </form>
+                        <div class="text-center">
+                            <p>Selecciona un componente para comparar:</p>
+                            <button class="btn btn-primary btn-lg" id="open-sidebar-compare-btn" data-component-type="{{ $type }}">
+                                Seleccionar Componente
+                            </button>
+                        </div>
                     @endif
                 </div>
             </div>
@@ -185,11 +180,14 @@
     @endif
 </div>
 
-<script>
-    function selectProduct2(productId) {
-        if (productId) {
-            window.location.href = '{{ route('componentes.compare', ['type' => $type, 'product1' => $product1->id]) }}/' + productId;
-        }
-    }
-</script>
+<link href="{{ asset('css/configuraciones.css') }}" rel="stylesheet">
 @endsection
+
+@push('scripts')
+    <script type="module" src="{{ asset('js/configuraciones/configuraciones.js') }}"></script>
+
+    <script>
+        const COMPONENT_TYPE_SLUG = "{{ $type }}";
+        const PRODUCT_1_ID = "{{ $product1->id }}";
+    </script>
+@endpush
