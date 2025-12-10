@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     <div class="modal-footer" id="responseButtons">
                         <button type="button" class="btn btn-success" id="saveConfigBtn">Guardar configuración</button>
-                        <button type="button" class="btn btn-primary" id="regenerateBtn">Volver a generar</button>
                     </div>
                 </div>
             </div>
