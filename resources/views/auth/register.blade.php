@@ -186,13 +186,10 @@
                 <h5>3. Cuentas de usuario</h5>
                 <p>Para utilizar ciertas funcionalidades de PCompare, deberás crear una cuenta. Eres responsable de mantener la confidencialidad de tu contraseña y de todas las actividades que ocurran bajo tu cuenta.</p>
                 
-                <h5>4. Contenido y conducta</h5>
-                <p>Los usuarios son responsables de cualquier contenido que publiquen en la plataforma. No se permite contenido ilegal, ofensivo, difamatorio o que viole derechos de terceros.</p>
-                
-                <h5>5. Propiedad intelectual</h5>
+                <h5>4. Propiedad intelectual</h5>
                 <p>Todo el contenido presente en PCompare está protegido por leyes de propiedad intelectual. No está permitida la reproducción sin autorización expresa.</p>
                 
-                <h5>6. Modificaciones</h5>
+                <h5>5. Modificaciones</h5>
                 <p>Nos reservamos el derecho de modificar estos términos en cualquier momento. Las modificaciones entrarán en vigor inmediatamente después de su publicación en el sitio web.</p>
             </div>
             <div class="modal-footer">
@@ -220,13 +217,10 @@
                 <h5>3. Protección de la información</h5>
                 <p>Implementamos una variedad de medidas de seguridad para mantener la seguridad de tu información personal. Los datos sensibles se transmiten encriptados y se almacenan con tecnologías de encriptación.</p>
                 
-                <h5>4. Cookies</h5>
-                <p>Utilizamos cookies para mejorar el acceso a nuestro sitio y para identificar a visitantes recurrentes. Las cookies también nos permiten rastrear y dirigir los intereses de nuestros usuarios para mejorar su experiencia en nuestro sitio.</p>
-                
-                <h5>5. Divulgación a terceros</h5>
+                <h5>4. Divulgación a terceros</h5>
                 <p>No vendemos, intercambiamos ni transferimos tu información personal identificable a terceros. Esto no incluye terceros de confianza que nos asisten en la operación de nuestro sitio web o la realización de nuestros servicios.</p>
                 
-                <h5>6. Derechos de acceso, rectificación y cancelación</h5>
+                <h5>5. Derechos de acceso, rectificación y cancelación</h5>
                 <p>Tienes derecho a acceder, rectificar y cancelar tus datos personales. Puedes ejercer estos derechos enviando un correo electrónico a privacidad@PCompare.com.</p>
             </div>
             <div class="modal-footer">
