@@ -8,10 +8,15 @@
             <div class="col-md-6">
                 <h1 class="display-4 fw-bold">PCompare</h1>
                 <p class="fs-5">Encuentra componentes al mejor precio y crea la configuración perfecta para tu PC.</p>
+
                 <div class="d-flex gap-3 mt-4">
-                    <a href="{{ route('configuraciones.index') }}" class="btn btn-primary btn-lg">Crear Configuración</a>
-                    <a href="{{ route('ai-consultant.index') }}" class="btn btn-outline-light btn-lg">Consultar al Asesor IA</a>
+                    @auth
+                        <a href="{{ route('configuraciones.index') }}" class="btn btn-primary btn-lg">Crear Configuración</a>
+                    @else
+                        <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg">Inicia Sesión para Crear Configuración</a>
+                    @endauth
                 </div>
+
             </div>
             <div class="col-md-6">
                 <img src="{{ asset('images/hero.jpg') }}" alt="PC Components" class="img-fluid rounded shadow" />
@@ -103,23 +108,6 @@
                 <li class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i> Análisis de relación calidad-precio</li>
             </ul>
             <a href="{{ url('asesor-ia') }}" class="btn btn-lg btn-primary mt-3">Consultar al Asesor IA</a>
-        </div>
-    </div>
-</div>
-
-<!-- Comparador de Portátiles -->
-<div class="container-fluid bg-light py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <h2>Comparador de Portátiles</h2>
-                <p class="lead">¿Buscas un portátil en lugar de un PC de escritorio? Nuestro comparador te ayuda a encontrar el modelo perfecto.</p>
-                <p>Compara especificaciones, precios y opiniones de usuarios para elegir el mejor portátil para tus necesidades.</p>
-                <a href="{{ url('componentes/portatiles') }}" class="btn btn-lg btn-primary mt-3">Comparar Portátiles</a>
-            </div>
-            <div class="col-md-6">
-                <img src="/api/placeholder/500/350" alt="Laptop Comparison" class="img-fluid rounded shadow" />
-            </div>
         </div>
     </div>
 </div>
