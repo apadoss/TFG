@@ -41,10 +41,7 @@ class SendPriceDropNotification implements ShouldQueue
     {
         try {
             $componentType = $this->getComponentType($this->component);
-            $componentUrl = route('componentes.view', [
-                'type' => $componentType,
-                'id' => $this->component->id  
-            ]);
+            $componentUrl = config('app.url') . '/componentes/' . $componentType . '/' . $this->component->id;
 
             Mail::to($this->notification->user->email)
                 ->send(new PriceDropNotification(
@@ -63,7 +60,7 @@ class SendPriceDropNotification implements ShouldQueue
                 'user_id' => $this->notification->user_id,
                 'component' => $this->component->name,
                 'old_price' => $this->oldPrice,
-                'new_price' => $this->newPrice
+                'new_price' => $this->newPrice 
             ]);
         } catch (\Exception $e) {
             Log::error('Error al enviar notificación de precio', [
