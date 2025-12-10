@@ -36,6 +36,7 @@ Route::post('/asesor-ia/message', [AIConsultantController::class, 'sendMessage']
 Route::get('/configuraciones/index', [ConfiguracionesController::class, 'index'])->name('configuraciones.index');
 Route::get('/configuraciones/create', [ConfiguracionesController::class, 'create'])->name('configuraciones.create');
 Route::post('/configuraciones/store', [ConfiguracionesController::class, 'store'])->name('configuraciones.store');
+Route::delete('/configuraciones/{id}', [ConfiguracionesController::class, 'destroy'])->name('configuraciones.destroy');
 Route::get('/configuraciones/{id}/comparar/{id2?}', [ConfiguracionesController::class, 'compare'])->name('configuraciones.compare');
 
 Route::middleware(['auth'])->group(function () {
