@@ -74,7 +74,7 @@
             <div class="col-md-6">
                 <h2 class="h4">Portabilidad</h2>
                 <select class="form-control" name="portability" id="portability">
-                    <option value="1" selected>Me es indiferente</option>
+                    <option value="1" selected>Sin preferencia</option>
                     <option value="2">Portátil</option>
                     <option value="3">Sobremesa</option>
                 </select>
