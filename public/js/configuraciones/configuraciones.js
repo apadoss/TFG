@@ -1,4 +1,4 @@
-import { getCpuId, getMotherboardId, getGpuId, fetchComponents, componentTypeMap } from './logic.js';
+import { getCpuId, getMotherboardId, getGpuId, fetchComponents, componentTypeMap, createOrUpdateHiddenInput } from './logic.js';
 import { filterComponents, createComponentCard } from './components_sidebar.js';
 
 // Mapeo de tipos de componente para la preselección desde URL
@@ -78,6 +78,9 @@ document.addEventListener('DOMContentLoaded', function () {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
         document.body.classList.remove('sidebar-open');
+        if (typeof window.handleCompareSelect === 'function') {
+            delete window.handleCompareSelect;
+        }
     };
 
     closeButton.addEventListener('click', closeSidebar);
@@ -126,10 +129,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // -----------------------------------------------------------------
-    // 4. LÓGICA DE BOTONES Y CONFIGURACIÓN
+    // 4. LÓGICA DE BOTONES DE CONFIGURACIÓN
     // -----------------------------------------------------------------
 
-    // Manejar botones de quitar componente
+    // Manejar botones de quitar componente (solo en la vista de configuración)
     const removeButtons = document.querySelectorAll('.btn-remove');
     removeButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -149,17 +152,16 @@ document.addEventListener('DOMContentLoaded', function () {
             
             const hiddenInput = document.querySelector(`input[name="${componentSlug}"]`);
             if (hiddenInput) {
-                // Usar remove() para eliminar el input
                 hiddenInput.remove();
             }
         });
     });
 
-    // Agregar event listeners a todos los botones "Seleccionar" para abrir la sidebar
+    // Agregar event listeners a todos los botones "Seleccionar" para abrir la sidebar (solo en la vista de configuración)
     const selectButtons = document.querySelectorAll('.btn.btn-primary');
     selectButtons.forEach(button => {
-        // Excluir el botón de guardar del formulario
-        if (button.type === 'submit') return;
+        // Excluir el botón de guardar del formulario y el botón de comparación
+        if (button.type === 'submit' || button.id === 'open-sidebar-compare-btn') return;
 
         button.addEventListener('click', function() {
             const componentType = this.closest('.card-body').querySelector('.card-title').textContent;
@@ -172,6 +174,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedComponentName = buttonText.replace('Seleccionado: ', '');
             }
             
+            // Asegurarse de que no esté definida la función de comparación
+            if (typeof window.handleCompareSelect === 'function') {
+                delete window.handleCompareSelect;
+            }
+
             loadComponents(componentType, sidebarContent, selectedComponentName);
             
             // Mostrar la sidebar
@@ -182,16 +189,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     
     // -----------------------------------------------------------------
-    // 5. LÓGICA DE LA FUENTE DE ALIMENTACIÓN
+    // 5. LÓGICA DE LA FUENTE DE ALIMENTACIÓN (Solo en la vista de configuración)
     // -----------------------------------------------------------------
     
-    const fuenteBtn = document.querySelector('#fuente_de_alimentacion-image')
+    // Obtener el botón de la Fuente de Alimentación
+    const fuenteBtn = document.querySelector('#psu-image') // Asumo que el ID es 'psu-image'
         ?.closest('.card')
-        .querySelector('.btn-primary');
+        ?.querySelector('.btn-primary');
     
     if (fuenteBtn) {
         fuenteBtn.disabled = true;
-        fuenteBtn.title = 'Debes seleccionar un procesador primero'; // Mensaje inicial
+        fuenteBtn.title = 'Debes seleccionar un procesador primero'; 
     
         function updateFuenteButtonState() {
             const cpuSelected = !!getCpuId();
@@ -207,15 +215,64 @@ document.addEventListener('DOMContentLoaded', function () {
     
         updateFuenteButtonState();
     
-        // Escuchar cambios en el documento para reevaluar el estado del botón
         document.addEventListener('change', updateFuenteButtonState);
         document.addEventListener('click', updateFuenteButtonState);
     }
     
     // -----------------------------------------------------------------
-    // 6. LÓGICA DE PRESELECCIÓN POR URL
+    // 6. LÓGICA DE BOTÓN DE COMPARACIÓN (VISTA DE COMPARACIÓN)
+    // -----------------------------------------------------------------
+    const compareButton = document.getElementById('open-sidebar-compare-btn');
+
+    if (compareButton) {
+        compareButton.addEventListener('click', function() {
+            if (typeof COMPONENT_TYPE_SLUG === 'undefined' || typeof PRODUCT_1_ID === 'undefined') {
+                console.error('Variables globales de comparación (COMPONENT_TYPE_SLUG/PRODUCT_1_ID) no encontradas.');
+                return;
+            }
+
+            const componentTypeSlug = COMPONENT_TYPE_SLUG;
+            
+            const slugToNameMap = {
+                'procesadores': 'Procesador',
+                'tarjetas-graficas': 'Tarjeta gráfica',
+                'placas-base': 'Placa Base',
+                'almacenamiento': 'Almacenamiento', // Asumo que este es el nombre completo
+                'ram': 'Memoria RAM', // Asumo que este es el nombre completo
+                'fuentes-alimentacion': 'Fuente de Alimentación',
+                'portatiles': 'Portátil' // Aunque portátiles no se compara con el mismo método, lo incluimos por robustez
+            };
+            
+            let componentTypeName = slugToNameMap[componentTypeSlug];
+
+            if (!componentTypeName) {
+                componentTypeName = componentTypeSlug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+                console.warn(`Mapeo de slug no definido para: ${componentTypeSlug}. Usando: ${componentTypeName}`);
+            }
+            
+            // Cargar componentes en la sidebar
+            loadComponents(componentTypeName, sidebarContent);
+            
+            // **CLAVE:** Definir la función global que 'sidebar.js' llamará al seleccionar
+            window.handleCompareSelect = (productId) => {
+                // Redirigir a la URL de comparación con los dos productos
+                const baseUrl = window.location.origin;
+                const redirectUrl = `${baseUrl}/products/${componentTypeSlug}/compare/${PRODUCT_1_ID}/${productId}`;
+                window.location.href = redirectUrl;
+            };
+
+            // Mostrar la sidebar
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            document.body.classList.add('sidebar-open');
+        });
+    }
+
+    // -----------------------------------------------------------------
+    // 7. LÓGICA DE PRESELECCIÓN POR URL (Deep Linking - Solo en Configuración)
     // -----------------------------------------------------------------
     
+    // ... (Mantener la lógica de pre-selección aquí si es relevante para tu vista de configuración)
     function findElementByText(selector, text) {
         const elements = document.querySelectorAll(selector);
         for (const element of elements) {

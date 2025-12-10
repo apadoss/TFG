@@ -199,6 +199,11 @@
         </div>
     </div>
 
-    <script src="{{ asset('js/configuraciones.js') }}"></script>
+    {{-- <script src="{{ asset('js/configuraciones.js') }}"></script> --}}
+    
     <link href="{{ asset('css/configuraciones.css') }}" rel="stylesheet">
+    
+    @push('scripts')
+        <script type="module" src="{{ asset('js/configuraciones/configuraciones.js') }}"></script>
+    @endpush
 @endsection

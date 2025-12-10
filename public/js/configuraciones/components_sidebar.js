@@ -1,3 +1,5 @@
+// sidebar.js
+
 import { componentTypeMap, createOrUpdateHiddenInput } from './logic.js';
 
 /** Funciones de manipulación de la Sidebar **/
@@ -7,6 +9,7 @@ export function filterComponents(searchText) {
     const searchLower = searchText.toLowerCase();
     
     componentCards.forEach(card => {
+        // Asegúrate de buscar 'h4' para el título, como en tu HTML de tarjeta
         const title = card.querySelector('h4').textContent.toLowerCase();
         card.style.display = title.includes(searchLower) ? 'flex' : 'none';
     });
@@ -52,6 +55,29 @@ export function createComponentCard(component, componentType) {
         const sidebar = document.getElementById('components-sidebar');
         const overlay = document.getElementById('sidebar-overlay');
         
+        // -----------------------------------------------------------------
+        // 1. LÓGICA DE COMPARACIÓN (PREFERENCIAL)
+        // Si 'handleCompareSelect' existe, estamos en modo comparación.
+        // -----------------------------------------------------------------
+        if (typeof window.handleCompareSelect === 'function') {
+            const componentId = component.id;
+            // Ejecuta la función global definida en configuraciones.js, que se encargará de la redirección
+            window.handleCompareSelect(componentId); 
+            
+            // Cerrar la sidebar al seleccionar, aunque la redirección también lo hará
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.classList.remove('sidebar-open');
+            
+            // Limpiar la función global después de usarla para evitar efectos secundarios
+            delete window.handleCompareSelect;
+            
+            return; // Detenemos la ejecución aquí
+        }
+        
+        // -----------------------------------------------------------------
+        // 2. LÓGICA DE CONFIGURACIÓN (SI NO HAY FUNCIÓN DE COMPARACIÓN)
+        // -----------------------------------------------------------------
         const originalButtons = document.querySelectorAll('.card-body');
         let targetButton = null;
         let targetCard = null;
@@ -90,6 +116,7 @@ export function createComponentCard(component, componentType) {
             }
         }
     });
+    // -----------------------------------------------------------------
 
     cardBody.appendChild(cardTitle);
     cardBody.appendChild(cardPrice);
