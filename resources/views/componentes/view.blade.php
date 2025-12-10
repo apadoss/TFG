@@ -196,7 +196,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        {!! isset($product->stock_by_vendor['pccomponentes'])
+                                        {!! !empty($product->stock_by_vendor['pccomponentes'])
                                             ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>' 
                                             : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i>Sin Stock</span>' 
                                         !!}
@@ -217,7 +217,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        {!! isset($product->stock_by_vendor['amazon'])
+                                        {!! !empty($product->stock_by_vendor['amazon'])
                                             ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>' 
                                             : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i>Sin Stock</span>' 
                                         !!}
@@ -238,7 +238,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        {!! isset($product->stock_by_vendor['coolmod'])
+                                        {!! !empty($product->stock_by_vendor['coolmod'])
                                             ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>'
                                             : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i>Sin Stock</span>'
                                         !!}
@@ -259,7 +259,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        {!! isset($product->stock_by_vendor['neobyte'])
+                                        {!! !empty($product->stock_by_vendor['neobyte'])
                                             ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>' 
                                             : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i>Sin Stock</span>' 
                                         !!}
