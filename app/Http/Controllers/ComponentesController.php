@@ -216,6 +216,7 @@ class ComponentesController extends Controller
         
         $pricesByVendor = [];
         $urlsByVendor = [];
+        $stockByVendor = [];
 
         foreach ($variants as $variant) {
             if (isset($variant->vendor) && isset($variant->price)) {
@@ -225,11 +226,18 @@ class ComponentesController extends Controller
                 if (isset($variant->url)) {
                     $urlsByVendor[$variant->vendor] = $variant->url;
                 }
+
+                if (isset($variant->in_stock)) {
+                    $stockByVendor[$variant->vendor] = (bool) $variant->in_stock;
+                } else {
+                    $stockByVendor[$variant->vendor] = false; 
+            }
             }
         }
 
         $product->prices_by_vendor = $pricesByVendor;
         $product->urls_by_vendor = $urlsByVendor;
+        $product->stock_by_vendor = $stockByVendor;
 
         return view('componentes.view', compact('product', 'type'));
     }
@@ -362,20 +370,34 @@ class ComponentesController extends Controller
         return response()->json($motherboards);
     }
     
-    public function getPowerSupplies(Request $request) 
-    {
+    public function getPowerSupplies(Request $request) {
         $query = FuenteAlimentacion::query();
 
-        if ($request->has('cpu_id') && $request->has('gpu_id')) {
-            $cpu = Procesador::find($request->cpu_id);
-            $gpu = TarjetaGrafica::find($request->gpu_id);
+        if ($request->has('cpu_id')) {
 
-            if ($cpu && $gpu) {
-                $requiredWattage = (($gpu->tdp + $cpu->tdp) + 75) * 1.3;
+            $cpu = Procesador::find($request->cpu_id);
+            $gpu = null;
+            $baseTDP = 75; // TDP base para el resto de componentes (Motherboard, RAM, etc.)
+
+            // Cargar GPU si está presente
+            if ($request->has('gpu_id')) {
+                $gpu = TarjetaGrafica::find($request->gpu_id);
+            }
+
+            if ($cpu) {
+                // Inicializar el TDP combinado con el TDP de la CPU y el TDP base
+                $combinedTDP = $cpu->tdp + $baseTDP;
+
+                // Si la GPU está presente, añadir su TDP
+                if ($gpu) {
+                    $combinedTDP += $gpu->tdp;
+                }
+                $requiredWattage = $combinedTDP * 1.3; 
+
                 $query->where('power', '>=', $requiredWattage);
             }
         }
-    
+
         return response()->json($query->get());
     }
     

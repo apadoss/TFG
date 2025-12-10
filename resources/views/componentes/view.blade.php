@@ -196,7 +196,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>
+                                        {!! isset($product->stock_by_vendor['pccomponentes'])
+                                            ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>' 
+                                            : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i>Sin Stock</span>' 
+                                        !!}
                                     </td>
                                     <td>
                                         <span class="fw-bold fs-5">{{ isset($product->prices_by_vendor['pccomponentes']) ? $product->prices_by_vendor['pccomponentes'].'€' : 'N/A' }}</span>
@@ -214,7 +217,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>
+                                        {!! isset($product->stock_by_vendor['amazon'])
+                                            ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>' 
+                                            : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i>Sin Stock</span>' 
+                                        !!}
                                     </td>
                                     <td>
                                         <span class="fw-bold fs-5">{{ isset($product->prices_by_vendor['amazon']) ? $product->prices_by_vendor['amazon'].'€' : 'N/A' }}</span>
@@ -232,7 +238,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>
+                                        {!! isset($product->stock_by_vendor['coolmod'])
+                                            ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>'
+                                            : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i>Sin Stock</span>'
+                                        !!}
                                     </td>
                                     <td>
                                         <span class="fw-bold fs-5">{{ isset($product->prices_by_vendor['coolmod']) ? $product->prices_by_vendor['coolmod'].'€' : 'N/A' }}</span>
@@ -250,7 +259,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>
+                                        {!! isset($product->stock_by_vendor['neobyte'])
+                                            ? '<span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle-fill me-1"></i>En Stock</span>' 
+                                            : '<span class="badge bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill me-1"></i>Sin Stock</span>' 
+                                        !!}
                                     </td>
                                     <td>
                                         <span class="fw-bold fs-5">{{ isset($product->prices_by_vendor['neobyte']) ? $product->prices_by_vendor['neobyte'].'€' : 'N/A' }}</span>
