@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Colores por tienda
     const vendorColors = {
-        'PcComponentes': {
+        'pccomponentes': {
             border: 'rgb(75, 192, 192)',
             background: 'rgba(75, 192, 192, 0.2)'
         },
@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
             border: 'rgb(255, 99, 132)',
             background: 'rgba(255, 99, 132, 0.2)'
         },
-        'Amazon': {
+        'amazon': {
             border: 'rgb(255, 205, 86)',
             background: 'rgba(255, 205, 86, 0.2)'
         },
-        'NeoByte': {
+        'neobyte': {
             border: 'rgb(153, 102, 255)',
             background: 'rgba(153, 102, 255, 0.2)'
         }
@@ -40,7 +40,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!isDataLoaded && !isLoading) {
             isLoading = true;
-            const chartContainer = document.getElementById('priceChart').parentElement;
+            const chartContainer = document.getElementById('priceChart') 
+                ? document.getElementById('priceChart').parentElement 
+                : document.getElementById('chartContainer');
             
             chartContainer.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Cargando...</span></div></div>';
             
