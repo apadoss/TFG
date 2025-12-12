@@ -39,22 +39,24 @@
                     </td>
                     <td>
                         <div class="d-flex flex-column gap-2">
-                            <button class="btn btn-primary">Editar</button>
+                            <a href="{{ route('configuraciones.edit', $configuracion->id) }}" class="btn btn-primary">Editar</a>
                             <a href="{{ route('configuraciones.compare', $configuracion->id) }}" class="btn btn-warning">
                                 <i class="bi bi-arrows-angle-expand"></i> Comparar
-                        </a>
-                            <form action="{{ route('configuraciones.destroy', $configuracion->id) }}" method="POST" class="w-100">
+                            </a>
+                            
+                            <form action="{{ route('configuraciones.destroy', $configuracion->id) }}" method="POST" id="delete-form-{{ $configuracion->id }}" class="w-100">
                                @csrf
                                @method('DELETE')
-                               <button type="submit" class="btn btn-danger w-100 btn-delete" data-delete-config="{{ $configuracion->id }}">
+                               <button type="submit" class="btn btn-danger w-100 btn-delete" data-config-id="{{ $configuracion->id }}">
                                    Eliminar
                                </button>
-                           </form>
+                            </form>
                         </div>
                     </td>
                 </tr>
             @endforeach
         </tbody>
+    </table>
 </div>
 
 {{-- Modal de confirmación --}}
